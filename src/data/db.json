@@ -1,0 +1,33 @@
+{
+  "categories": [
+    { "id": "cat_1", "name": "Bông tai", "slug": "bong-tai" },
+    { "id": "cat_2", "name": "Kẹp tóc", "slug": "kep-toc" },
+    { "id": "cat_3", "name": "MĐB Merchs", "slug": "mdb-merchs" }
+  ],
+  "products": [
+    {
+      "id": "prod_1",
+      "name": "Khuyên tai Cáo Đỏ Pastel",
+      "price": 85000,
+      "categoryId": "cat_1",
+      "imageUrl": "/images/fox_earrings.png",
+      "description": "Khuyên tai hình cáo nhỏ xinh, màu pastel đỏ nhẹ nhàng."
+    },
+    {
+      "id": "prod_2",
+      "name": "Nơ Kẹp Tóc Đỏ",
+      "price": 60000,
+      "categoryId": "cat_2",
+      "imageUrl": "/images/red_bow_clip.png",
+      "description": "Nơ kẹp tóc làm thủ công tinh xảo."
+    },
+    {
+      "id": "prod_3",
+      "name": "Huy Hiệu Cáo Nhỏ",
+      "price": 45000,
+      "categoryId": "cat_3",
+      "imageUrl": "/images/fox_badge.png",
+      "description": "Huy hiệu cài áo dễ thương."
+    }
+  ]
+}
