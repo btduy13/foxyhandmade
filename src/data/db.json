@@ -1,8 +1,25 @@
 {
   "categories": [
-    { "id": "cat_1", "name": "Bông tai", "slug": "bong-tai" },
-    { "id": "cat_2", "name": "Kẹp tóc", "slug": "kep-toc" },
-    { "id": "cat_3", "name": "MĐB Merchs", "slug": "mdb-merchs" }
+    {
+      "id": "cat_1",
+      "name": "Bông tai",
+      "slug": "bong-tai"
+    },
+    {
+      "id": "cat_2",
+      "name": "Kẹp tóc",
+      "slug": "kep-toc"
+    },
+    {
+      "id": "cat_3",
+      "name": "MĐB Merchs",
+      "slug": "mdb-merchs"
+    },
+    {
+      "name": "Vong tay",
+      "id": "cat_1775442088321",
+      "slug": "vong-tay"
+    }
   ],
   "products": [
     {
@@ -11,7 +28,8 @@
       "price": 85000,
       "categoryId": "cat_1",
       "imageUrl": "/images/fox_earrings.png",
-      "description": "Khuyên tai hình cáo nhỏ xinh, màu pastel đỏ nhẹ nhàng."
+      "description": "Khuyên tai hình cáo nhỏ xinh, màu pastel đỏ nhẹ nhàng.",
+      "stock": 15
     },
     {
       "id": "prod_2",
@@ -19,7 +37,8 @@
       "price": 60000,
       "categoryId": "cat_2",
       "imageUrl": "/images/red_bow_clip.png",
-      "description": "Nơ kẹp tóc làm thủ công tinh xảo."
+      "description": "Nơ kẹp tóc làm thủ công tinh xảo.",
+      "stock": 3
     },
     {
       "id": "prod_3",
@@ -27,7 +46,20 @@
       "price": 45000,
       "categoryId": "cat_3",
       "imageUrl": "/images/fox_badge.png",
-      "description": "Huy hiệu cài áo dễ thương."
+      "description": "Huy hiệu cài áo dễ thương.",
+      "stock": 20
     }
-  ]
+  ],
+  "homepage": {
+    "heroTitle": "Bộ Sưu Tập Mùa Hè",
+    "heroSubtitle": "Khám phá những thiết kế mới nhất dành riêng cho bạn",
+    "heroCtaText": "Xem Ngay",
+    "heroBanner1Text": "Phụ Kiện Xinh Xắn",
+    "heroBanner1CategoryId": "cat_1",
+    "heroBanner2Text": "Khuyên Tai Nhỏ Nhắn",
+    "heroBanner2CategoryId": "cat_2",
+    "featuredProductIds": ["prod_1"],
+    "newArrivalsIds": [],
+    "bestSellersIds": []
+  }
 }

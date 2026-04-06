@@ -23,11 +23,31 @@ export async function POST(request) {
   const product = await request.json();
   const db = readDb();
   
-  const newProduct = { ...product, id: `prod_${Date.now()}` };
+  const newProduct = { ...product, id: `prod_${Date.now()}`, stock: Number(product.stock) || 0 };
   db.products.push(newProduct);
   writeDb(db);
   
   return NextResponse.json(newProduct, { status: 201 });
+}
+
+export async function PUT(request) {
+  const updatedProduct = await request.json();
+  const db = readDb();
+  
+  const idx = db.products.findIndex(p => p.id === updatedProduct.id);
+  if (idx === -1) {
+    return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+  }
+  
+  db.products[idx] = {
+    ...db.products[idx],
+    ...updatedProduct,
+    price: Number(updatedProduct.price),
+    stock: Number(updatedProduct.stock) || 0,
+  };
+  writeDb(db);
+  
+  return NextResponse.json(db.products[idx]);
 }
 
 export async function DELETE(request) {
