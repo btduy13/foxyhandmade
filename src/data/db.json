@@ -51,15 +51,86 @@
     }
   ],
   "homepage": {
+    "announcementText": "CHAO MUNG BAN!",
+    "announcementColor": "#e85d74",
     "heroTitle": "Bộ Sưu Tập Mùa Hè",
     "heroSubtitle": "Khám phá những thiết kế mới nhất dành riêng cho bạn",
     "heroCtaText": "Xem Ngay",
+    "heroBannerImage": "/images/hero_banner.png",
     "heroBanner1Text": "Phụ Kiện Xinh Xắn",
     "heroBanner1CategoryId": "cat_1",
+    "banner1Image": "/images/banner_earrings.png",
     "heroBanner2Text": "Khuyên Tai Nhỏ Nhắn",
     "heroBanner2CategoryId": "cat_2",
-    "featuredProductIds": ["prod_1"],
+    "banner2Image": "/images/banner_clips.png",
+    "featuredProductIds": [
+      "prod_1",
+      "prod_2",
+      "prod_3"
+    ],
     "newArrivalsIds": [],
-    "bestSellersIds": []
-  }
+    "newArrivalsTitle": "UU DAI THANG 4",
+    "newArrivalsTag": "🆕 Mới Nhất",
+    "bestSellersIds": [],
+    "bestSellersTitle": "Sản Phẩm Được Mua Nhiều Nhất",
+    "bestSellersTag": "🔥 Bán Chạy",
+    "promoStrip": [
+      {
+        "icon": "🚚",
+        "title": "Van chuyen nhanh",
+        "subtitle": "Miễn phí vận chuyển cho đơn từ 300k"
+      },
+      {
+        "icon": "🎀",
+        "title": "Handmade 100%",
+        "subtitle": "Mỗi sản phẩm làm tay tỉ mỉ, không đại trà"
+      },
+      {
+        "icon": "💝",
+        "title": "Đổi trả trong 7 ngày",
+        "subtitle": "Cam kết chất lượng, đổi trả dễ dàng"
+      }
+    ],
+    "socialLinks": {
+      "facebook": "https://facebook.com/foxyhandmade",
+      "instagram": "https://instagram.com/foxyhandmade",
+      "tiktok": ""
+    }
+  },
+  "orders": [],
+  "coupons": [
+    {
+      "id": "cp_1",
+      "code": "FOXYNEW",
+      "type": "percent",
+      "value": 10,
+      "minOrder": 100000,
+      "active": true,
+      "createdAt": "2026-04-09T00:00:00.000Z"
+    },
+    {
+      "id": "coup_2",
+      "code": "FREESHIP",
+      "type": "fixed",
+      "value": 30000,
+      "minOrder": 0,
+      "active": true,
+      "createdAt": "2026-04-09T00:00:00.000Z"
+    }
+  ],
+  "shippingConfig": {
+    "freeAbove": 300000,
+    "flatRate": 30000
+  },
+  "reviews": [
+    {
+      "id": "rev_1775788553609",
+      "productId": "prod_1",
+      "name": "Test User",
+      "rating": 5,
+      "comment": "S",
+      "createdAt": "2026-04-10T02:35:53.610Z"
+    }
+  ],
+  "contacts": []
 }

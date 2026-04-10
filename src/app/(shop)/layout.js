@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { CartProvider } from "@/context/CartContext";
+import { WishlistProvider } from "@/context/WishlistContext";
 import ShopHeader from "@/components/ShopHeader";
 
 export const metadata = {
@@ -8,15 +9,24 @@ export const metadata = {
   description: "Khám phá bộ sưu tập phụ kiện thủ công xinh xắn, dễ thương từ Foxy Handmade.",
 };
 
-function getCategories() {
-  const db = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'src/data/db.json'), 'utf-8'));
-  return db.categories || [];
+function getDb() {
+  return JSON.parse(fs.readFileSync(path.join(process.cwd(), 'src/data/db.json'), 'utf-8'));
 }
 
 export default function ShopLayout({ children }) {
-  const categories = getCategories();
+  const db = getDb();
+  const categories = db.categories || [];
+  const hp = db.homepage || {};
+  const social = hp.socialLinks || {};
+
   return (
     <CartProvider>
+      <WishlistProvider>
+      {hp.announcementText && (
+        <div style={{ background: hp.announcementColor || "#e85d74", color: "#fff", padding: "8px 20px", textAlign: "center", fontSize: "13px", fontWeight: "700", letterSpacing: "0.5px" }}>
+          {hp.announcementText}
+        </div>
+      )}
       <ShopHeader categories={categories} />
       <main style={{ minHeight: "60vh" }}>
         {children}
@@ -39,8 +49,8 @@ export default function ShopLayout({ children }) {
           </div>
           <div>
             <h3>Chính Sách</h3>
-            <a href="#">Chính sách mua hàng</a>
-            <a href="#">Chính sách bảo mật</a>
+            <a href="/about">Về chúng tôi</a>
+            <a href="/contact">Liên hệ</a>
             <a href="#">Chính sách đổi trả</a>
             <a href="#">Hướng dẫn đặt hàng</a>
           </div>
@@ -52,10 +62,10 @@ export default function ShopLayout({ children }) {
           </div>
           <div>
             <h3>Kết Nối</h3>
-            <a href="https://facebook.com" target="_blank" rel="noreferrer">📘 Facebook</a>
-            <a href="https://instagram.com" target="_blank" rel="noreferrer">📸 Instagram</a>
+            <a href={social.facebook || "https://facebook.com"} target="_blank" rel="noreferrer">📘 Facebook</a>
+            <a href={social.instagram || "https://instagram.com"} target="_blank" rel="noreferrer">📸 Instagram</a>
             <a href="https://shopee.vn" target="_blank" rel="noreferrer">🛍 Shopee</a>
-            <a href="https://tiktok.com" target="_blank" rel="noreferrer">🎵 TikTok</a>
+            <a href={social.tiktok || "https://tiktok.com"} target="_blank" rel="noreferrer">🎵 TikTok</a>
           </div>
         </div>
         <div className="footer-bottom">
@@ -64,6 +74,7 @@ export default function ShopLayout({ children }) {
           </div>
         </div>
       </footer>
+      </WishlistProvider>
     </CartProvider>
   );
 }

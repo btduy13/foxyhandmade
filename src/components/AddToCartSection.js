@@ -1,5 +1,6 @@
 "use client";
 import { useCart } from "@/context/CartContext";
+import { WishlistBtn } from "@/components/AddToCartBtn";
 import { useState } from "react";
 
 export default function AddToCartSection({ product }) {
@@ -44,22 +45,23 @@ export default function AddToCartSection({ product }) {
       </div>
 
       {/* Buttons */}
-      <div style={{ display: "flex", gap: "12px", marginBottom: "16px" }}>
+      <div style={{ display: "flex", gap: "12px", marginBottom: "16px", alignItems: "center" }}>
         <button
           onClick={handleAdd}
           disabled={outOfStock}
-          className="btn btn-outline"
-          style={{ flex: 1, padding: "13px", fontSize: "15px", opacity: outOfStock ? 0.5 : 1, cursor: outOfStock ? "not-allowed" : "pointer" }}
+          className="btn"
+          style={{ flex: 1, padding: "14px", fontSize: "15px", opacity: outOfStock ? 0.5 : 1, cursor: outOfStock ? "not-allowed" : "pointer", background: "var(--brand-accent)" }}
         >
-          {outOfStock ? "😢 Hết hàng" : added ? "✓ Đã thêm vào giỏ!" : "🛒 Thêm vào giỏ"}
+          {outOfStock ? "😢 Hết hàng" : added ? "✓ Đã thêm!" : "🛒 Thêm vào giỏ"}
         </button>
-        <a href="/cart" className="btn btn-accent" style={{ flex: 1, padding: "13px", fontSize: "15px", textAlign: "center" }}>
+        <a href="/cart" className="btn btn-outline" style={{ flex: 1, padding: "14px", fontSize: "15px", textAlign: "center", textDecoration: "none" }}>
           Mua ngay →
         </a>
+        <WishlistBtn product={product} style={{ width: "48px", height: "48px", background: "white", border: "1.5px solid var(--border-color)" }} />
       </div>
 
       {added && (
-        <div style={{ background: "#dcfce7", color: "#15803d", padding: "10px 16px", borderRadius: "var(--radius-sm)", fontSize: "13px", fontWeight: "600", display: "flex", gap: "10px", alignItems: "center" }}>
+        <div style={{ background: "#dcfce7", color: "#15803d", padding: "12px 16px", borderRadius: "var(--radius-sm)", fontSize: "13px", fontWeight: "600", display: "flex", gap: "10px", alignItems: "center", animation: "slideIn 0.3s ease" }}>
           <span>✓ Đã thêm {qty} sản phẩm vào giỏ hàng!</span>
           <a href="/cart" style={{ color: "#15803d", fontWeight: "800", textDecoration: "underline", marginLeft: "auto" }}>Xem giỏ →</a>
         </div>

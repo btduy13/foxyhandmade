@@ -70,6 +70,18 @@ export default async function Home() {
   const banner1Img = hp.banner1Image || "/images/banner_earrings.png";
   const banner2Img = hp.banner2Image || "/images/banner_clips.png";
 
+  // Promo strip & section customization
+  const promoStrip = hp.promoStrip && hp.promoStrip.length === 3 ? hp.promoStrip : [
+    { icon: "🚚", title: "Freeship toàn quốc", subtitle: "Miễn phí vận chuyển cho đơn từ 300k" },
+    { icon: "🎀", title: "Handmade 100%", subtitle: "Mỗi sản phẩm làm tay tỉ mỉ, không đại trà" },
+    { icon: "💝", title: "Đổi trả trong 7 ngày", subtitle: "Cam kết chất lượng, đổi trả dễ dàng" }
+  ];
+
+  const newArrivalsTitle = hp.newArrivalsTitle || "Sản Phẩm Mới Trình Làng";
+  const newArrivalsTag = hp.newArrivalsTag || "🆕 Mới Nhất";
+  const bestSellersTitle = hp.bestSellersTitle || "Sản Phẩm Được Mua Nhiều Nhất";
+  const bestSellersTag = hp.bestSellersTag || "🔥 Bán Chạy";
+
   const catEmojis = ["🌸", "🎀", "🦊", "✨", "🎁", "💖", "🌷", "🍓"];
 
   return (
@@ -115,18 +127,12 @@ export default async function Home() {
 
       {/* ===== PROMO STRIP ===== */}
       <div className="promo-grid">
-        <div className="promo-card">
-          <div className="icon">🚚</div>
-          <div><h4>Freeship toàn quốc</h4><p>Miễn phí vận chuyển cho đơn từ 300k</p></div>
-        </div>
-        <div className="promo-card">
-          <div className="icon">🎀</div>
-          <div><h4>Handmade 100%</h4><p>Mỗi sản phẩm làm tay tỉ mỉ, không đại trà</p></div>
-        </div>
-        <div className="promo-card">
-          <div className="icon">💝</div>
-          <div><h4>Đổi trả trong 7 ngày</h4><p>Cam kết chất lượng, đổi trả dễ dàng</p></div>
-        </div>
+        {promoStrip.map((item, i) => (
+          <div key={i} className="promo-card">
+            <div className="icon">{item.icon}</div>
+            <div><h4>{item.title}</h4><p>{item.subtitle}</p></div>
+          </div>
+        ))}
       </div>
 
       {/* ===== FEATURED (if any) ===== */}
@@ -151,7 +157,7 @@ export default async function Home() {
       {/* ===== NEW ARRIVALS ===== */}
       <div id="san-pham" className="section-wrapper">
         <div className="section-title">
-          <h2><span className="section-tag">🆕 Mới Nhất</span> Sản Phẩm Mới Trình Làng</h2>
+          <h2><span className="section-tag">{newArrivalsTag}</span> {newArrivalsTitle}</h2>
           <a href="/search?q=" className="view-all-link">Xem tất cả →</a>
         </div>
         <div className="product-grid">
@@ -166,7 +172,7 @@ export default async function Home() {
       {/* ===== BEST SELLERS ===== */}
       <div id="ban-chay" className="section-wrapper" style={{ paddingBottom: "60px" }}>
         <div className="section-title">
-          <h2><span className="section-tag">🔥 Bán Chạy</span> Sản Phẩm Được Mua Nhiều Nhất</h2>
+          <h2><span className="section-tag">{bestSellersTag}</span> {bestSellersTitle}</h2>
           <a href="/search?q=" className="view-all-link">Xem tất cả →</a>
         </div>
         <div className="product-grid">

@@ -33,6 +33,20 @@ export async function POST(request) {
   return NextResponse.json(newCategory, { status: 201 });
 }
 
+export async function PUT(request) {
+  const { id, name } = await request.json();
+  const db = readDb();
+  const idx = db.categories.findIndex(c => c.id === id);
+  if (idx === -1) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  db.categories[idx] = {
+    ...db.categories[idx],
+    name: name.trim(),
+    slug: name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+  };
+  writeDb(db);
+  return NextResponse.json(db.categories[idx]);
+}
+
 export async function DELETE(request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');

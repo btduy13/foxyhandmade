@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import AddToCartSection from "@/components/AddToCartSection";
+import ProductImageGallery from "@/components/ProductImageGallery";
+import ProductReviews from "@/components/ProductReviews";
 import { QuickAddBtn } from "@/components/AddToCartBtn";
 
 function getDb() {
@@ -48,28 +50,12 @@ export default async function ProductDetails({ params }) {
       {/* Main layout */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "56px", alignItems: "start" }}>
 
-        {/* Product Image */}
+        {/* Product Image Gallery */}
         <div style={{ position: "sticky", top: "130px" }}>
-          <div style={{
-            background: "var(--bg-image)",
-            borderRadius: "var(--radius-lg)",
-            overflow: "hidden",
-            border: "1px solid var(--border-light)",
-            position: "relative",
-            aspectRatio: "1/1",
-          }}>
-            {outOfStock && (
-              <div className="out-of-stock-overlay">
-                <span className="out-of-stock-label">Tạm hết hàng</span>
-              </div>
-            )}
-            {lowStock && (
-              <div style={{ position: "absolute", top: "16px", left: "16px", background: "var(--brand-accent)", color: "#fff", padding: "5px 14px", borderRadius: "var(--radius-pill)", fontWeight: "800", fontSize: "13px", zIndex: 2 }}>
-                ⚡ Chỉ còn {product.stock} chiếc
-              </div>
-            )}
-            <img src={product.imageUrl} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-          </div>
+          <ProductImageGallery imageUrl={product.imageUrl} images={product.images || []} />
+          {outOfStock && (
+            <div style={{ position: "absolute", top: "20px", left: "20px", background: "rgba(0,0,0,0.6)", color: "white", padding: "8px 16px", borderRadius: "8px", fontWeight: "700", zIndex: 10 }}>Tạm hết hàng</div>
+          )}
         </div>
 
         {/* Product Info */}
@@ -101,11 +87,10 @@ export default async function ProductDetails({ params }) {
             {product.description}
           </p>
 
-          {/* AddToCartSection client component */}
           <AddToCartSection product={product} />
 
           {/* Trust badges */}
-          <div style={{ marginTop: "28px", padding: "20px 24px", background: "var(--bg-section)", borderRadius: "var(--radius-md)", border: "1px dashed var(--border-color)" }}>
+          <div style={{ marginTop: "28px", padding: "20px 24px", background: "var(--bg-section)", borderRadius: "var(--radius-md)", border: "1px solid var(--border-light)" }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
               {[
                 ["🎀", "Handmade 100%", "Làm tay tỉ mỉ, không hàng loạt"],
@@ -125,6 +110,9 @@ export default async function ProductDetails({ params }) {
           </div>
         </div>
       </div>
+
+      {/* Reviews Section */}
+      <ProductReviews productId={product.id} />
 
       {/* Related Products */}
       {related.length > 0 && (

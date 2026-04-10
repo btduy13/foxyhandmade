@@ -1,11 +1,66 @@
 "use client";
 import { useCart } from "@/context/CartContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function CartPage() {
-  const { items, removeFromCart, updateQty, clearCart, totalPrice } = useCart();
+  const { items, removeFromCart, updateQty, clearCart, totalPrice: subtotal } = useCart();
   const [form, setForm] = useState({ name: "", phone: "", address: "", note: "" });
   const [status, setStatus] = useState(null); // null | "loading" | "success" | "error"
+  
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponError, setCouponError] = useState("");
+  const [shippingFee, setShippingFee] = useState(30000);
+
+  // Constants (should ideally fetch from /api/settings if we had one, but we use db.json defaults)
+  const FREE_SHIPPING_THRESHOLD = 300000;
+  const FLAT_RATE_SHIPPING = 30000;
+
+  useEffect(() => {
+    if (subtotal >= FREE_SHIPPING_THRESHOLD || items.length === 0) {
+      setShippingFee(0);
+    } else {
+      setShippingFee(FLAT_RATE_SHIPPING);
+    }
+  }, [subtotal, items.length]);
+
+  const discount = (() => {
+    if (!appliedCoupon) return 0;
+    if (appliedCoupon.type === "percent") {
+      return Math.floor(subtotal * (appliedCoupon.value / 100));
+    }
+    return appliedCoupon.value;
+  })();
+
+  const finalTotal = Math.max(0, subtotal + shippingFee - discount);
+
+  const handleApplyCoupon = async () => {
+    setCouponError("");
+    if (!couponCode) return;
+
+    try {
+      const res = await fetch(`/api/coupons`);
+      const coupons = await res.json();
+      const coupon = coupons.find(c => c.code.toUpperCase() === couponCode.toUpperCase() && c.active);
+
+      if (!coupon) {
+        setCouponError("Mã giảm giá không hợp lệ hoặc đã hết hạn.");
+        setAppliedCoupon(null);
+        return;
+      }
+
+      if (subtotal < (coupon.minOrder || 0)) {
+        setCouponError(`Đơn hàng tối thiểu ${(coupon.minOrder).toLocaleString("vi-VN")}đ để sử dụng mã này.`);
+        setAppliedCoupon(null);
+        return;
+      }
+
+      setAppliedCoupon(coupon);
+      setCouponError("");
+    } catch {
+      setCouponError("Có lỗi xảy ra khi kiểm tra mã.");
+    }
+  };
 
   const handleOrder = async (e) => {
     e.preventDefault();
@@ -18,7 +73,11 @@ export default function CartPage() {
         body: JSON.stringify({
           ...form,
           items: items.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
-          total: totalPrice,
+          subtotal,
+          shippingFee,
+          discount,
+          couponCode: appliedCoupon?.code || null,
+          total: finalTotal,
           createdAt: new Date().toISOString(),
         }),
       });
@@ -54,7 +113,14 @@ export default function CartPage() {
 
   return (
     <div className="container" style={{ padding: "40px 20px 80px" }}>
-      {/* Breadcrumb */}
+      <style>{`
+        @media (max-width: 768px) {
+          .cart-layout { grid-template-columns: 1fr !important; }
+          .cart-item { flex-wrap: wrap; }
+          .cart-item-img { width: 64px !important; height: 64px !important; }
+          .cart-item-right { flex-direction: row !important; align-items: center !important; width: 100%; justify-content: space-between; margin-top: 8px; }
+        }
+      `}</style>
       <div style={{ marginBottom: "24px", fontSize: "14px", color: "var(--text-muted)" }}>
         <a href="/" style={{ color: "var(--text-muted)" }}>Trang chủ</a>
         <span style={{ margin: "0 8px" }}>›</span>
@@ -72,19 +138,19 @@ export default function CartPage() {
           <a href="/" className="btn">← Khám phá sản phẩm</a>
         </div>
       ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 420px", gap: "40px", alignItems: "start" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr minmax(0, 420px)", gap: "40px", alignItems: "start" }} className="cart-layout">
 
           {/* Cart Items */}
           <div>
             <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               {items.map(item => (
-                <div key={item.id} style={{
+                <div key={item.id} className="cart-item" style={{
                   display: "flex", gap: "16px", padding: "16px",
                   border: "1px solid var(--border-color)", borderRadius: "var(--radius-md)",
                   background: "white", alignItems: "center",
                 }}>
                   <a href={`/products/${item.id}`}>
-                    <img src={item.imageUrl} alt={item.name} style={{ width: "80px", height: "80px", objectFit: "cover", borderRadius: "8px", flexShrink: 0 }} />
+                    <img src={item.imageUrl} alt={item.name} className="cart-item-img" style={{ width: "80px", height: "80px", objectFit: "cover", borderRadius: "8px", flexShrink: 0 }} />
                   </a>
                   <div style={{ flex: 1 }}>
                     <a href={`/products/${item.id}`} style={{ textDecoration: "none" }}>
@@ -99,7 +165,7 @@ export default function CartPage() {
                       <button onClick={() => updateQty(item.id, item.qty + 1)} style={{ width: "30px", height: "30px", border: "1px solid var(--border-color)", borderRadius: "6px", background: "var(--bg-color)", cursor: "pointer", fontWeight: "700", fontSize: "16px" }}>+</button>
                     </div>
                   </div>
-                  <div style={{ textAlign: "right", flexShrink: 0 }}>
+                  <div className="cart-item-right" style={{ textAlign: "right", flexShrink: 0 }}>
                     <p style={{ fontWeight: "700", color: "var(--brand-red-dark)", fontSize: "16px", marginBottom: "12px" }}>
                       {(Number(item.price) * item.qty).toLocaleString("vi-VN")}đ
                     </p>
@@ -119,20 +185,63 @@ export default function CartPage() {
 
           {/* Order Summary + Form */}
           <div>
-            {/* Total */}
+            {/* Promo Code */}
+            <div style={{ background: "white", border: "1px solid var(--border-color)", borderRadius: "var(--radius-md)", padding: "20px", marginBottom: "20px" }}>
+              <h3 style={{ fontSize: "15px", fontWeight: "700", marginBottom: "12px" }}>Mã giảm giá</h3>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <input 
+                  type="text" 
+                  placeholder="Nhập mã..." 
+                  style={{ ...inputStyle, flex: 1 }} 
+                  value={couponCode} 
+                  onChange={e => setCouponCode(e.target.value)}
+                />
+                <button 
+                  onClick={handleApplyCoupon} 
+                  style={{ background: "var(--brand-primary)", color: "white", border: "none", padding: "0 16px", borderRadius: "var(--radius-sm)", fontWeight: "700", cursor: "pointer" }}
+                >
+                  Áp dụng
+                </button>
+              </div>
+              {couponError && <p style={{ color: "#ef4444", fontSize: "13px", marginTop: "8px" }}>{couponError}</p>}
+              {appliedCoupon && (
+                <div style={{ marginTop: "12px", background: "#fdf2f2", padding: "8px 12px", borderRadius: "8px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: "13px", color: "var(--brand-red-dark)", fontWeight: "700" }}>✓ {appliedCoupon.code}</span>
+                  <button onClick={() => setAppliedCoupon(null)} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer", fontWeight: "700" }}>×</button>
+                </div>
+              )}
+            </div>
+
+            {/* Total Calculation */}
             <div style={{ background: "white", border: "1px solid var(--border-color)", borderRadius: "var(--radius-md)", padding: "24px", marginBottom: "20px" }}>
               <h3 style={{ fontSize: "18px", fontWeight: "700", marginBottom: "16px" }}>Tóm tắt đơn hàng</h3>
-              {items.map(i => (
-                <div key={i.id} style={{ display: "flex", justifyContent: "space-between", fontSize: "14px", color: "var(--text-secondary)", marginBottom: "8px" }}>
-                  <span>{i.name} × {i.qty}</span>
-                  <span>{(Number(i.price) * i.qty).toLocaleString("vi-VN")}đ</span>
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "15px", color: "var(--text-secondary)" }}>
+                  <span>Tạm tính</span>
+                  <span>{subtotal.toLocaleString("vi-VN")}đ</span>
                 </div>
-              ))}
-              <div style={{ borderTop: "1px solid var(--border-color)", marginTop: "12px", paddingTop: "12px", display: "flex", justifyContent: "space-between", fontWeight: "800", fontSize: "18px", color: "var(--brand-red-dark)" }}>
-                <span>Tổng cộng</span>
-                <span>{totalPrice.toLocaleString("vi-VN")}đ</span>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "15px", color: "var(--text-secondary)" }}>
+                  <span>Phí vận chuyển</span>
+                  <span style={{ color: shippingFee === 0 ? "#16a34a" : "inherit", fontWeight: shippingFee === 0 ? "700" : "normal" }}>
+                    {shippingFee === 0 ? "Miễn phí" : `${shippingFee.toLocaleString("vi-VN")}đ`}
+                  </span>
+                </div>
+                {discount > 0 && (
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "15px", color: "#16a34a", fontWeight: "600" }}>
+                    <span>Giảm giá ({appliedCoupon?.code})</span>
+                    <span>-{(discount).toLocaleString("vi-VN")}đ</span>
+                  </div>
+                )}
+                <div style={{ borderTop: "1px solid var(--border-color)", marginTop: "4px", paddingTop: "12px", display: "flex", justifyContent: "space-between", fontWeight: "800", fontSize: "20px", color: "var(--brand-red-dark)" }}>
+                  <span>Tổng cộng</span>
+                  <span>{finalTotal.toLocaleString("vi-VN")}đ</span>
+                </div>
               </div>
-              <p style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "8px" }}>Phí ship sẽ được thông báo sau khi đặt hàng</p>
+              {subtotal < FREE_SHIPPING_THRESHOLD && (
+                <div style={{ marginTop: "16px", padding: "10px", background: "#fff9f2", borderRadius: "8px", border: "1px solid #ffe8cc", fontSize: "12px", color: "#d97706" }}>
+                  💡 Mua thêm <strong>{(FREE_SHIPPING_THRESHOLD - subtotal).toLocaleString("vi-VN")}đ</strong> để được <strong>Miễn phí vận chuyển</strong>!
+                </div>
+              )}
             </div>
 
             {/* Order Form */}
