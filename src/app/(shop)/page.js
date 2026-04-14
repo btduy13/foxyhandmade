@@ -115,7 +115,7 @@ export default async function Home() {
               <h3>{banner1Text}</h3>
               <span style={{ fontSize: "12px", opacity: 0.85, marginTop: "4px" }}>Xem ngay →</span>
             </div>
-          </div>
+          </a>
           <a href={banner2Cat} className="hero-banner">
             <img src={banner2Img} alt={banner2Text} />
             <div className="hero-banner-overlay">
