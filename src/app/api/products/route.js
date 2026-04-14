@@ -1,62 +1,56 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-
-// Local temporary storage helper
-const getDbPath = () => path.join(process.cwd(), 'src/data/db.json');
-
-const readDb = () => {
-  const fileData = fs.readFileSync(getDbPath(), 'utf-8');
-  return JSON.parse(fileData);
-};
-
-const writeDb = (data) => {
-  fs.writeFileSync(getDbPath(), JSON.stringify(data, null, 2), 'utf-8');
-};
+import { supabase } from '@/lib/supabase';
 
 export async function GET() {
-  const db = readDb();
-  return NextResponse.json(db.products);
+  const { data, error } = await supabase.from('products').select('*');
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json(data || []);
 }
 
 export async function POST(request) {
   const product = await request.json();
-  const db = readDb();
+  const newProduct = { 
+    ...product, 
+    id: `prod_${Date.now()}`, 
+    stock: Number(product.stock) || 0,
+    price: Number(product.price) || 0
+  };
   
-  const newProduct = { ...product, id: `prod_${Date.now()}`, stock: Number(product.stock) || 0 };
-  db.products.push(newProduct);
-  writeDb(db);
+  const { data, error } = await supabase.from('products').insert([newProduct]).select();
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   
-  return NextResponse.json(newProduct, { status: 201 });
+  return NextResponse.json(data[0], { status: 201 });
 }
 
 export async function PUT(request) {
   const updatedProduct = await request.json();
-  const db = readDb();
   
-  const idx = db.products.findIndex(p => p.id === updatedProduct.id);
-  if (idx === -1) {
-    return NextResponse.json({ error: 'Product not found' }, { status: 404 });
-  }
-  
-  db.products[idx] = {
-    ...db.products[idx],
+  const payload = {
     ...updatedProduct,
-    price: Number(updatedProduct.price),
+    price: Number(updatedProduct.price) || 0,
     stock: Number(updatedProduct.stock) || 0,
   };
-  writeDb(db);
+  delete payload.id; // don't update primary key
   
-  return NextResponse.json(db.products[idx]);
+  const { data, error } = await supabase
+    .from('products')
+    .update(payload)
+    .eq('id', updatedProduct.id)
+    .select();
+    
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (!data || data.length === 0) return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+  
+  return NextResponse.json(data[0]);
 }
 
 export async function DELETE(request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
   
-  const db = readDb();
-  db.products = db.products.filter(p => p.id !== id);
-  writeDb(db);
+  const { error } = await supabase.from('products').delete().eq('id', id);
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   
   return NextResponse.json({ success: true });
 }

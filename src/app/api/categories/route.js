@@ -1,59 +1,49 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-
-const getDbPath = () => path.join(process.cwd(), 'src/data/db.json');
-
-const readDb = () => {
-  const fileData = fs.readFileSync(getDbPath(), 'utf-8');
-  return JSON.parse(fileData);
-};
-
-const writeDb = (data) => {
-  fs.writeFileSync(getDbPath(), JSON.stringify(data, null, 2), 'utf-8');
-};
+import { supabase } from '@/lib/supabase';
 
 export async function GET() {
-  const db = readDb();
-  return NextResponse.json(db.categories);
+  const { data, error } = await supabase.from('categories').select('*');
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json(data || []);
 }
 
 export async function POST(request) {
   const category = await request.json();
-  const db = readDb();
-  
   const newCategory = { 
-    ...category, 
     id: `cat_${Date.now()}`,
+    name: category.name,
     slug: category.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')
   };
-  db.categories.push(newCategory);
-  writeDb(db);
   
-  return NextResponse.json(newCategory, { status: 201 });
+  const { data, error } = await supabase.from('categories').insert([newCategory]).select();
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  
+  return NextResponse.json(data[0], { status: 201 });
 }
 
 export async function PUT(request) {
   const { id, name } = await request.json();
-  const db = readDb();
-  const idx = db.categories.findIndex(c => c.id === id);
-  if (idx === -1) return NextResponse.json({ error: 'Not found' }, { status: 404 });
-  db.categories[idx] = {
-    ...db.categories[idx],
-    name: name.trim(),
-    slug: name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-  };
-  writeDb(db);
-  return NextResponse.json(db.categories[idx]);
+  const slug = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  
+  const { data, error } = await supabase
+    .from('categories')
+    .update({ name: name.trim(), slug })
+    .eq('id', id)
+    .select();
+    
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (!data || data.length === 0) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  
+  return NextResponse.json(data[0]);
 }
 
 export async function DELETE(request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
   
-  const db = readDb();
-  db.categories = db.categories.filter(c => c.id !== id);
-  writeDb(db);
+  const { error } = await supabase.from('categories').delete().eq('id', id);
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   
   return NextResponse.json({ success: true });
 }

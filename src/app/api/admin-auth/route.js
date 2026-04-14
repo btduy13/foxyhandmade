@@ -1,3 +1,4 @@
+﻿export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
@@ -9,7 +10,7 @@ export async function POST(request) {
   const adminPassword = process.env.ADMIN_PASSWORD || 'foxyhandmade2026';
 
   if (password !== adminPassword) {
-    return NextResponse.json({ error: 'Mật khẩu không đúng' }, { status: 401 });
+    return NextResponse.json({ error: 'Máº­t kháº©u khÃ´ng Ä‘Ãºng' }, { status: 401 });
   }
 
   const response = NextResponse.json({ ok: true });

@@ -1,44 +1,45 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-
-const getDbPath = () => path.join(process.cwd(), 'src/data/db.json');
-const readDb = () => JSON.parse(fs.readFileSync(getDbPath(), 'utf-8'));
-const writeDb = (data) => fs.writeFileSync(getDbPath(), JSON.stringify(data, null, 2), 'utf-8');
+import { supabase } from '@/lib/supabase';
 
 export async function GET() {
-  const db = readDb();
-  const orders = (db.orders || []).slice().reverse(); // newest first
-  return NextResponse.json(orders);
+  const { data, error } = await supabase.from('orders').select('*').order('createdAt', { ascending: false });
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json(data || []);
 }
 
 export async function POST(request) {
   const order = await request.json();
-  const db = readDb();
-  if (!db.orders) db.orders = [];
-  const newOrder = { ...order, id: `order_${Date.now()}`, status: "pending" };
-  db.orders.push(newOrder);
-  writeDb(db);
-  return NextResponse.json(newOrder, { status: 201 });
+  const newOrder = { 
+    id: `order_${Date.now()}`,
+    items: order.items || [],
+    customerInfo: order.customerInfo || {},
+    total: Number(order.total) || 0,
+    status: order.status || 'pending'
+  };
+  
+  const { data, error } = await supabase.from('orders').insert([newOrder]).select();
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  
+  return NextResponse.json(data[0], { status: 201 });
 }
 
 export async function PUT(request) {
   const { id, status } = await request.json();
-  const db = readDb();
-  if (!db.orders) db.orders = [];
-  const idx = db.orders.findIndex(o => o.id === id);
-  if (idx === -1) return NextResponse.json({ error: 'Order not found' }, { status: 404 });
-  db.orders[idx] = { ...db.orders[idx], status };
-  writeDb(db);
-  return NextResponse.json(db.orders[idx]);
+  
+  const { data, error } = await supabase.from('orders').update({ status }).eq('id', id).select();
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (!data || data.length === 0) return NextResponse.json({ error: 'Order not found' }, { status: 404 });
+  
+  return NextResponse.json(data[0]);
 }
 
 export async function DELETE(request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
-  const db = readDb();
-  if (!db.orders) db.orders = [];
-  db.orders = db.orders.filter(o => o.id !== id);
-  writeDb(db);
+  
+  const { error } = await supabase.from('orders').delete().eq('id', id);
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  
   return NextResponse.json({ success: true });
 }

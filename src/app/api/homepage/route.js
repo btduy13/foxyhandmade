@@ -1,10 +1,6 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-
-const getDbPath = () => path.join(process.cwd(), 'src/data/db.json');
-const readDb = () => JSON.parse(fs.readFileSync(getDbPath(), 'utf-8'));
-const writeDb = (data) => fs.writeFileSync(getDbPath(), JSON.stringify(data, null, 2), 'utf-8');
+import { supabase } from '@/lib/supabase';
 
 const DEFAULT_HOMEPAGE = {
   heroTitle: "Bộ Sưu Tập Mùa Hè",
@@ -23,14 +19,24 @@ const DEFAULT_HOMEPAGE = {
 };
 
 export async function GET() {
-  const db = readDb();
-  return NextResponse.json(db.homepage || DEFAULT_HOMEPAGE);
+  const { data, error } = await supabase.from('homepage').select('data').eq('id', 'default').single();
+  if (error || !data) return NextResponse.json(DEFAULT_HOMEPAGE);
+  return NextResponse.json(data.data || DEFAULT_HOMEPAGE);
 }
 
 export async function PUT(request) {
   const config = await request.json();
-  const db = readDb();
-  db.homepage = { ...(db.homepage || DEFAULT_HOMEPAGE), ...config };
-  writeDb(db);
-  return NextResponse.json(db.homepage);
+  
+  // fetch existing first to merge
+  const { data: existing } = await supabase.from('homepage').select('data').eq('id', 'default').single();
+  const merged = { ...(existing?.data || DEFAULT_HOMEPAGE), ...config };
+  
+  const { data, error } = await supabase
+    .from('homepage')
+    .upsert({ id: 'default', data: merged })
+    .select();
+    
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  
+  return NextResponse.json(data[0].data);
 }
