@@ -32,8 +32,10 @@ export default async function ShopLayout({ children }) {
     <CartProvider>
       <WishlistProvider>
       {hp.announcementText && (
-        <div style={{ background: hp.announcementColor || "#e85d74", color: "#fff", padding: "8px 20px", textAlign: "center", fontSize: "13px", fontWeight: "700", letterSpacing: "0.5px" }}>
-          {hp.announcementText}
+        <div style={{ background: hp.announcementColor || "#e85d74", color: "#fff", padding: "8px 0", fontSize: "13px", fontWeight: "700", letterSpacing: "0.5px", overflow: "hidden", whiteSpace: "nowrap" }}>
+          <div className="marquee-content" style={{ display: "inline-block", paddingLeft: "100%" }}>
+            {hp.announcementText}
+          </div>
         </div>
       )}
       <ShopHeader categories={categories} />
