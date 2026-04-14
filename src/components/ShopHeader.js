@@ -189,7 +189,7 @@ export default function ShopHeader({ categories = [] }) {
         <div className="mobile-nav-overlay" onClick={() => setMobileOpen(false)}>
           <div className="mobile-nav-drawer" onClick={e => e.stopPropagation()}>
             <div className="drawer-header">
-              <img src="/logo.png" alt="Foxy Handmade Logo" style={{ height: "30px", objectFit: "contain", borderRadius: "4px" }} />
+              <img src="/logo.png" alt="Foxy Handmade Logo" style={{ height: "50px", objectFit: "contain", borderRadius: "4px" }} />
               <button className="drawer-close" onClick={() => setMobileOpen(false)}>✕</button>
             </div>
 
@@ -250,7 +250,7 @@ export default function ShopHeader({ categories = [] }) {
           </button>
 
           <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", flexShrink: 0 }}>
-            <img src="/logo.png" alt="Foxy Handmade Logo" style={{ height: "48px", objectFit: "contain", borderRadius: "8px" }} />
+            <img src="/logo.png" alt="Foxy Handmade Logo" style={{ height: "80px", objectFit: "contain", borderRadius: "8px" }} />
           </a>
 
           <form className="search-bar-container desktop-search" onSubmit={handleSearch} style={{ flex: 1, maxWidth: "560px" }}>
