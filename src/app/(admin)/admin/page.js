@@ -444,7 +444,28 @@ export default function AdminDashboard() {
             }}>{t.label}</button>
           ))}
         </div>
-        <a href="/" style={{ color: "rgba(255,255,255,0.6)", fontSize: "14px", textDecoration: "none", fontWeight: "600" }}>← Về trang chủ</a>
+        <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+          <a href="/" style={{ color: "rgba(255,255,255,0.6)", fontSize: "14px", textDecoration: "none", fontWeight: "600" }}>← Về trang chủ</a>
+          <button 
+            onClick={async () => {
+              if (!confirm("Bạn có chắc muốn đăng xuất?")) return;
+              await fetch("/api/auth/logout", { method: "POST" });
+              window.location.href = "/admin/login";
+            }}
+            style={{
+              background: "rgba(239,68,68,0.15)",
+              color: "#f87171",
+              border: "1px solid rgba(239,68,68,0.3)",
+              borderRadius: "8px",
+              padding: "6px 14px",
+              fontWeight: "600",
+              fontSize: "13px",
+              cursor: "pointer",
+            }}
+          >
+            Đăng xuất
+          </button>
+        </div>
       </div>
 
       <div style={S.body}>

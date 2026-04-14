@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function AdminLoginPage() {
+export default function AdminLogin() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -10,80 +10,87 @@ export default function AdminLoginPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
+    setLoading(true);
+
     try {
-      const res = await fetch("/api/admin-auth", {
+      const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password }),
       });
-      if (res.ok) {
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        // Redirect to admin dashboard
         router.push("/admin");
-        router.refresh();
+        router.refresh(); // Force refresh to apply auth state
       } else {
-        setError("Mật khẩu không đúng. Vui lòng thử lại.");
+        setError(data.message || "Mật khẩu không đúng!");
       }
-    } catch {
-      setError("Có lỗi xảy ra. Vui lòng thử lại.");
+    } catch (err) {
+      setError("Không thể kết nối đến máy chủ.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
     <div style={{
       minHeight: "100vh",
-      background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
-      display: "flex", alignItems: "center", justifyContent: "center",
-      fontFamily: "'Inter', sans-serif",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "#faf5ef", // Using existing --bg-page
+      fontFamily: "'Nunito', sans-serif"
     }}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');`}</style>
       <div style={{
-        background: "rgba(255,255,255,0.06)", backdropFilter: "blur(20px)",
-        border: "1px solid rgba(255,255,255,0.12)", borderRadius: "24px",
-        padding: "48px 40px", width: "100%", maxWidth: "420px",
-        boxShadow: "0 24px 64px rgba(0,0,0,0.4)",
+        background: "#fff",
+        padding: "40px",
+        borderRadius: "16px",
+        boxShadow: "0 10px 40px rgba(107,45,31,0.1)",
+        width: "100%",
+        maxWidth: "400px",
+        textAlign: "center"
       }}>
-        {/* Logo */}
-        <div style={{ textAlign: "center", marginBottom: "36px" }}>
-          <div style={{ fontSize: "48px", marginBottom: "12px" }}>🦊</div>
-          <h1 style={{ fontSize: "24px", fontWeight: "800", color: "#fff", marginBottom: "4px" }}>
-            FoxyHandmade Admin
+        <div style={{ marginBottom: "32px" }}>
+          <div style={{ fontSize: "48px", marginBottom: "8px" }}>🦊</div>
+          <h1 style={{ color: "#6b2d1f", fontSize: "24px", fontWeight: "800", margin: "0 0 8px 0" }}>
+            Quản Trị Viên
           </h1>
-          <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.45)" }}>
-            Nhập mật khẩu để truy cập bảng điều khiển
+          <p style={{ color: "#9c6e57", fontSize: "14px", margin: 0 }}>
+            Vui lòng nhập mật khẩu để vào thiết lập hệ thống.
           </p>
         </div>
 
-        <form onSubmit={handleLogin}>
-          <div style={{ marginBottom: "20px" }}>
-            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "rgba(255,255,255,0.7)", marginBottom: "8px" }}>
-              Mật khẩu
-            </label>
+        <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+          <div>
             <input
               type="password"
+              placeholder="Nhập mật khẩu..."
               value={password}
-              onChange={e => setPassword(e.target.value)}
-              placeholder="••••••••••••"
-              required
-              autoFocus
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
               style={{
-                width: "100%", padding: "12px 16px",
-                background: "rgba(255,255,255,0.08)",
-                border: `1px solid ${error ? "rgba(239,68,68,0.6)" : "rgba(255,255,255,0.15)"}`,
-                borderRadius: "12px", color: "#fff", fontSize: "15px",
-                outline: "none", boxSizing: "border-box", letterSpacing: "2px",
+                width: "100%",
+                padding: "14px 16px",
+                borderRadius: "12px",
+                border: "2px solid #f0e4d8",
+                fontSize: "15px",
+                outline: "none",
+                transition: "all 0.2s",
+                fontFamily: "inherit"
               }}
+              onFocus={(e) => e.target.style.borderColor = "#6b2d1f"}
+              onBlur={(e) => e.target.style.borderColor = "#f0e4d8"}
+              autoFocus
             />
           </div>
 
           {error && (
-            <div style={{
-              background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.3)",
-              borderRadius: "10px", padding: "10px 14px", marginBottom: "16px",
-              color: "#f87171", fontSize: "13px", fontWeight: "600",
-            }}>
-              ⚠ {error}
+            <div style={{ color: "#d9534f", fontSize: "13px", fontWeight: "700" }}>
+              {error}
             </div>
           )}
 
@@ -91,20 +98,28 @@ export default function AdminLoginPage() {
             type="submit"
             disabled={loading}
             style={{
-              width: "100%", padding: "14px",
-              background: loading ? "rgba(232,93,116,0.5)" : "linear-gradient(135deg, #e85d74, #c0392b)",
-              color: "#fff", border: "none", borderRadius: "12px",
-              fontWeight: "700", fontSize: "16px", cursor: loading ? "not-allowed" : "pointer",
-              transition: "opacity 0.2s",
+              padding: "16px",
+              background: "#6b2d1f",
+              color: "#fff",
+              border: "none",
+              borderRadius: "12px",
+              fontSize: "16px",
+              fontWeight: "800",
+              cursor: loading ? "not-allowed" : "pointer",
+              transition: "background 0.2s",
+              fontFamily: "inherit",
+              opacity: loading ? 0.7 : 1
             }}
+            onMouseOver={(e) => !loading && (e.target.style.background = "#4a1f14")}
+            onMouseOut={(e) => !loading && (e.target.style.background = "#6b2d1f")}
           >
-            {loading ? "Đang kiểm tra..." : "🔓 Đăng nhập"}
+            {loading ? "Đang xác thực..." : "Đăng Nhập"}
           </button>
         </form>
 
-        <div style={{ textAlign: "center", marginTop: "24px" }}>
-          <a href="/" style={{ color: "rgba(255,255,255,0.4)", fontSize: "13px", textDecoration: "none" }}>
-            ← Về trang chủ
+        <div style={{ marginTop: "24px", fontSize: "12px", color: "#9c6e57" }}>
+          <a href="/" style={{ textDecoration: "none", color: "inherit", fontWeight: "600" }}>
+            ← Quay về trang chủ
           </a>
         </div>
       </div>
