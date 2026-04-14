@@ -1,17 +1,25 @@
-import fs from 'fs';
-import path from 'path';
+import { supabase } from '@/lib/supabase';
 import AddToCartSection from "@/components/AddToCartSection";
 import ProductImageGallery from "@/components/ProductImageGallery";
 import ProductReviews from "@/components/ProductReviews";
 import { QuickAddBtn } from "@/components/AddToCartBtn";
 
-function getDb() {
-  return JSON.parse(fs.readFileSync(path.join(process.cwd(), 'src/data/db.json'), 'utf-8'));
+export const dynamic = 'force-dynamic';
+
+async function getDb() {
+  const [categoriesRes, productsRes] = await Promise.all([
+    supabase.from('categories').select('*'),
+    supabase.from('products').select('*')
+  ]);
+  return {
+    categories: categoriesRes.data || [],
+    products: productsRes.data || []
+  };
 }
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
-  const db = getDb();
+  const db = await getDb();
   const product = db.products.find(p => p.id === id);
   if (!product) return { title: "Sản phẩm không tồn tại" };
   return { title: `${product.name} — Foxy Handmade`, description: product.description };
@@ -19,7 +27,7 @@ export async function generateMetadata({ params }) {
 
 export default async function ProductDetails({ params }) {
   const { id } = await params;
-  const db = getDb();
+  const db = await getDb();
   const product = db.products.find(p => p.id === id);
 
   if (!product) {

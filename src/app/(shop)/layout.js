@@ -1,20 +1,29 @@
-import fs from 'fs';
-import path from 'path';
 import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
 import ShopHeader from "@/components/ShopHeader";
+import { supabase } from '@/lib/supabase';
+
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: "Foxy Handmade — Phụ kiện thủ công handmade",
   description: "Khám phá bộ sưu tập phụ kiện thủ công xinh xắn, dễ thương từ Foxy Handmade.",
 };
 
-function getDb() {
-  return JSON.parse(fs.readFileSync(path.join(process.cwd(), 'src/data/db.json'), 'utf-8'));
+async function getDb() {
+  const [categoriesRes, homepageRes] = await Promise.all([
+    supabase.from('categories').select('*'),
+    supabase.from('homepage').select('data').eq('id', 'default').single()
+  ]);
+
+  return {
+    categories: categoriesRes.data || [],
+    homepage: homepageRes.data?.data || {}
+  };
 }
 
-export default function ShopLayout({ children }) {
-  const db = getDb();
+export default async function ShopLayout({ children }) {
+  const db = await getDb();
   const categories = db.categories || [];
   const hp = db.homepage || {};
   const social = hp.socialLinks || {};

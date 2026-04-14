@@ -1,9 +1,20 @@
-import fs from 'fs';
-import path from 'path';
+import { supabase } from '@/lib/supabase';
 import { QuickAddBtn } from "@/components/AddToCartBtn";
 
-function getDb() {
-  return JSON.parse(fs.readFileSync(path.join(process.cwd(), 'src/data/db.json'), 'utf-8'));
+export const dynamic = 'force-dynamic';
+
+async function getDb() {
+  const [categoriesRes, productsRes, homepageRes] = await Promise.all([
+    supabase.from('categories').select('*'),
+    supabase.from('products').select('*'),
+    supabase.from('homepage').select('data').eq('id', 'default').single()
+  ]);
+
+  return {
+    categories: categoriesRes.data || [],
+    products: productsRes.data || [],
+    homepage: homepageRes.data?.data || {}
+  };
 }
 
 function ProductCard({ p, catName, badge, featured }) {
@@ -38,7 +49,7 @@ function ProductCard({ p, catName, badge, featured }) {
 }
 
 export default async function Home() {
-  const db = getDb();
+  const db = await getDb();
   const { categories, products } = db;
   const hp = db.homepage || {};
 
@@ -104,7 +115,7 @@ export default async function Home() {
               <h3>{banner1Text}</h3>
               <span style={{ fontSize: "12px", opacity: 0.85, marginTop: "4px" }}>Xem ngay →</span>
             </div>
-          </a>
+          </div>
           <a href={banner2Cat} className="hero-banner">
             <img src={banner2Img} alt={banner2Text} />
             <div className="hero-banner-overlay">

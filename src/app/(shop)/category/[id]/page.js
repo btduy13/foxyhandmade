@@ -1,15 +1,23 @@
-import fs from 'fs';
-import path from 'path';
+import { supabase } from '@/lib/supabase';
 import { QuickAddBtn } from "@/components/AddToCartBtn";
 import SearchFilters from "@/components/SearchFilters";
 
-function getDb() {
-  return JSON.parse(fs.readFileSync(path.join(process.cwd(), 'src/data/db.json'), 'utf-8'));
+export const dynamic = 'force-dynamic';
+
+async function getDb() {
+  const [categoriesRes, productsRes] = await Promise.all([
+    supabase.from('categories').select('*'),
+    supabase.from('products').select('*')
+  ]);
+  return {
+    categories: categoriesRes.data || [],
+    products: productsRes.data || []
+  };
 }
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
-  const db = getDb();
+  const db = await getDb();
   const cat = db.categories.find(c => c.id === id);
   return { title: cat ? `${cat.name} — Foxy Handmade` : "Danh mục — Foxy Handmade" };
 }
@@ -24,7 +32,7 @@ export default async function CategoryPage({ params, searchParams }) {
   const page = Number(p.page) || 1;
   const PAGE_SIZE = 12;
 
-  const db = getDb();
+  const db = await getDb();
   const cat = db.categories.find(c => c.id === id);
   let results = db.products.filter(prod => prod.categoryId === id);
 
