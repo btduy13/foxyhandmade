@@ -1,37 +1,63 @@
-﻿export const dynamic = 'force-dynamic';
-import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+export const dynamic = "force-dynamic";
 
-const SESSION_COOKIE = 'foxy_admin_session';
-const SESSION_VALUE = 'authenticated';
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
+
+import {
+  ADMIN_SESSION_COOKIE,
+  clearAdminSession,
+  createAdminSessionToken,
+  getAdminAuthErrorMessage,
+  getAdminSessionCookieOptions,
+  isAdminAuthConfigured,
+  isValidAdminPassword,
+  verifyAdminSessionToken,
+} from "@/lib/admin-session";
 
 export async function POST(request) {
-  const { password } = await request.json();
-  const adminPassword = process.env.ADMIN_PASSWORD || 'foxyhandmade2026';
+  const authError = getAdminAuthErrorMessage();
+  if (authError) {
+    return NextResponse.json({ error: authError }, { status: 500 });
+  }
 
-  if (password !== adminPassword) {
-    return NextResponse.json({ error: 'Máº­t kháº©u khÃ´ng Ä‘Ãºng' }, { status: 401 });
+  const { password } = await request.json();
+  if (!isValidAdminPassword(password)) {
+    return NextResponse.json({ error: "Incorrect password" }, { status: 401 });
+  }
+
+  const token = createAdminSessionToken();
+  if (!token) {
+    return NextResponse.json(
+      { error: "Unable to create an admin session" },
+      { status: 500 }
+    );
   }
 
   const response = NextResponse.json({ ok: true });
-  response.cookies.set(SESSION_COOKIE, SESSION_VALUE, {
-    httpOnly: true,
-    sameSite: 'lax',
-    maxAge: 60 * 60 * 24, // 24 hours
-    path: '/',
+  response.cookies.set({
+    name: ADMIN_SESSION_COOKIE,
+    value: token,
+    ...getAdminSessionCookieOptions(),
   });
+
   return response;
 }
 
 export async function DELETE() {
   const response = NextResponse.json({ ok: true });
-  response.cookies.set(SESSION_COOKIE, '', { maxAge: 0, path: '/' });
-  return response;
+  return clearAdminSession(response);
 }
 
 export async function GET() {
+  if (!isAdminAuthConfigured()) {
+    return NextResponse.json({ authenticated: false, configured: false });
+  }
+
   const cookieStore = await cookies();
-  const session = cookieStore.get(SESSION_COOKIE);
-  const authenticated = session?.value === SESSION_VALUE;
-  return NextResponse.json({ authenticated });
+  const session = cookieStore.get(ADMIN_SESSION_COOKIE)?.value;
+
+  return NextResponse.json({
+    authenticated: verifyAdminSessionToken(session),
+    configured: true,
+  });
 }

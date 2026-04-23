@@ -850,9 +850,23 @@ export default function AdminDashboard() {
         {/* ===== ORDERS ===== */}
         {activeTab === "orders" && (() => {
           const statusInfo = (s) => ORDER_STATUSES.find(x => x.key === s) || { label: s, color: "#f3f4f6", textColor: "#374151", icon: "•" };
-          const filtered = orders.filter(o => {
+          const getOrderCustomer = (order) => ({
+            name: order.name || order.customerInfo?.name || "",
+            phone: order.phone || order.customerInfo?.phone || "",
+            address: order.address || order.customerInfo?.address || "",
+            note: order.note || order.customerInfo?.note || "",
+            createdAt: order.createdAt || "",
+          });
+          const normalizedOrders = orders.map((order) => ({
+            ...order,
+            ...getOrderCustomer(order),
+          }));
+          const filtered = normalizedOrders.filter(o => {
             const matchStatus = orderStatusFilter === "all" || o.status === orderStatusFilter;
-            const matchSearch = orderSearch === "" || o.name?.toLowerCase().includes(orderSearch.toLowerCase()) || o.phone?.includes(orderSearch) || o.id?.includes(orderSearch);
+            const matchSearch = orderSearch === ""
+              || o.name.toLowerCase().includes(orderSearch.toLowerCase())
+              || o.phone.includes(orderSearch)
+              || o.id?.includes(orderSearch);
             return matchStatus && matchSearch;
           });
           const stats = ORDER_STATUSES.map(s => ({ ...s, count: orders.filter(o => o.status === s.key).length }));
@@ -1129,7 +1143,7 @@ export default function AdminDashboard() {
               <div style={{ textAlign: "center", padding: "40px", color: "rgba(255,255,255,0.4)" }}>Chưa có tin nhắn nào.</div>
             ) : (
               <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "16px" }}>
-                {contacts.sort((a,b) => b.id - a.id).map(c => (
+                {[...contacts].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)).map(c => (
                   <div key={c.id} style={{ ...S.productRow, padding: "20px", flexDirection: "column", alignItems: "start", background: c.read ? "rgba(255,255,255,0.02)" : "rgba(232,93,116,0.06)", border: c.read ? "1px solid rgba(255,255,255,0.05)" : "1px solid rgba(232,93,116,0.3)" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", width: "100%", marginBottom: "12px" }}>
                       <div>

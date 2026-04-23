@@ -42,6 +42,9 @@ export default function ProductReviews({ productId }) {
   const avgRating = reviews.length > 0 
     ? (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1)
     : 0;
+  const sortedReviews = [...reviews].sort(
+    (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+  );
 
   return (
     <div style={{ marginTop: "48px", borderTop: "1px solid var(--border-light)", paddingTop: "48px" }}>
@@ -99,7 +102,7 @@ export default function ProductReviews({ productId }) {
         </div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-          {reviews.sort((a,b) => b.id - a.id).map(r => (
+          {sortedReviews.map(r => (
             <div key={r.id} style={{ display: "flex", gap: "16px", paddingBottom: "24px", borderBottom: "1px solid var(--border-light)" }}>
               <div style={{ width: "48px", height: "48px", background: "var(--bg-section)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px", fontWeight: "800", color: "var(--brand-primary)", flexShrink: 0 }}>
                 {r.name?.[0]?.toUpperCase() || "A"}

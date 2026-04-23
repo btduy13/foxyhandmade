@@ -1,51 +1,22 @@
-import { supabase } from '@/lib/supabase';
-import { QuickAddBtn } from "@/components/AddToCartBtn";
+import Link from "next/link";
 
-export const dynamic = 'force-dynamic';
+import StoreProductCard from "@/components/StoreProductCard";
+import { supabase } from "@/lib/supabase";
+
+export const dynamic = "force-dynamic";
 
 async function getDb() {
   const [categoriesRes, productsRes, homepageRes] = await Promise.all([
-    supabase.from('categories').select('*'),
-    supabase.from('products').select('*'),
-    supabase.from('homepage').select('data').eq('id', 'default').single()
+    supabase.from("categories").select("*"),
+    supabase.from("products").select("*"),
+    supabase.from("homepage").select("data").eq("id", "default").single(),
   ]);
 
   return {
     categories: categoriesRes.data || [],
     products: productsRes.data || [],
-    homepage: homepageRes.data?.data || {}
+    homepage: homepageRes.data?.data || {},
   };
-}
-
-function ProductCard({ p, catName, badge, featured }) {
-  const outOfStock = !p.stock || Number(p.stock) === 0;
-  const lowStock = Number(p.stock) > 0 && Number(p.stock) <= 5;
-  return (
-    <div className="product-card">
-      {featured && <div className="featured-ribbon">⭐ Nổi bật</div>}
-      <a href={`/products/${p.id}`} style={{ textDecoration: "none", display: "block" }}>
-        <div className="product-image-wrap">
-          {badge && !outOfStock && <span className="product-badge">{badge}</span>}
-          {outOfStock ? (
-            <div className="out-of-stock-overlay"><span className="out-of-stock-label">Hết hàng</span></div>
-          ) : lowStock ? (
-            <div style={{ position: "absolute", bottom: "8px", left: "8px", background: "var(--brand-accent)", color: "#fff", fontSize: "11px", fontWeight: "700", padding: "2px 8px", borderRadius: "var(--radius-pill)", zIndex: 3 }}>Còn {p.stock}</div>
-          ) : null}
-          <img src={p.imageUrl} alt={p.name} className="product-image" />
-          <div className="product-cart-overlay">
-            <QuickAddBtn product={p} />
-          </div>
-        </div>
-        <div className="product-info">
-          <div className="product-category-tag">{catName}</div>
-          <h3 className="product-title">{p.name}</h3>
-          <div className="product-bottom">
-            <span className="product-price">{Number(p.price).toLocaleString("vi-VN")}đ</span>
-          </div>
-        </div>
-      </a>
-    </div>
-  );
 }
 
 export default async function Home() {
@@ -57,142 +28,234 @@ export default async function Home() {
   const newArrivalsIds = hp.newArrivalsIds || [];
   const bestSellersIds = hp.bestSellersIds || [];
 
-  const newArrivals = newArrivalsIds.length > 0
-    ? newArrivalsIds.map(id => products.find(p => p.id === id)).filter(Boolean)
-    : products;
+  const featuredProducts = featuredIds
+    .map((id) => products.find((product) => product.id === id))
+    .filter(Boolean);
 
-  const bestSellers = bestSellersIds.length > 0
-    ? bestSellersIds.map(id => products.find(p => p.id === id)).filter(Boolean)
+  const newArrivals = newArrivalsIds.length
+    ? newArrivalsIds.map((id) => products.find((product) => product.id === id)).filter(Boolean)
+    : products.slice(0, 10);
+
+  const bestSellers = bestSellersIds.length
+    ? bestSellersIds.map((id) => products.find((product) => product.id === id)).filter(Boolean)
     : [...products].reverse().slice(0, 10);
 
-  const getCatName = (id) => categories.find(c => c.id === id)?.name || "";
+  const getCategoryName = (id) => categories.find((category) => category.id === id)?.name || "";
 
-  // Hero config
-  const heroTitle = hp.heroTitle || "Bộ Sưu Tập Mùa Hè";
-  const heroSubtitle = hp.heroSubtitle || "Khám phá những thiết kế mới nhất dành riêng cho bạn";
-  const heroCtaText = hp.heroCtaText || "Xem Ngay";
-  const banner1Text = hp.heroBanner1Text || "Phụ Kiện Xinh Xắn";
+  const heroTitle = hp.heroTitle || "Bộ sưu tập mùa này dành cho những ngày muốn thật xinh";
+  const heroSubtitle =
+    hp.heroSubtitle ||
+    "Những món phụ kiện handmade được chọn lọc để bạn dễ phối đồ, dễ tặng quà và luôn có cảm giác đặc biệt khi mở hộp.";
+  const heroCtaText = hp.heroCtaText || "Khám phá bộ sưu tập";
+
+  const banner1Text = hp.heroBanner1Text || "Phụ kiện xinh xắn";
+  const banner2Text = hp.heroBanner2Text || "Khuyên tai nhỏ nhắn";
   const banner1Cat = hp.heroBanner1CategoryId ? `/category/${hp.heroBanner1CategoryId}` : "/search?q=";
-  const banner2Text = hp.heroBanner2Text || "Khuyên Tai Nhỏ Nhắn";
   const banner2Cat = hp.heroBanner2CategoryId ? `/category/${hp.heroBanner2CategoryId}` : "/search?q=";
 
-  // Banner images from config or default
   const heroBannerImg = hp.heroBannerImage || "/images/hero_banner.png";
   const banner1Img = hp.banner1Image || "/images/banner_earrings.png";
   const banner2Img = hp.banner2Image || "/images/banner_clips.png";
 
-  // Promo strip & section customization
-  const promoStrip = hp.promoStrip && hp.promoStrip.length === 3 ? hp.promoStrip : [
-    { icon: "🚚", title: "Freeship toàn quốc", subtitle: "Miễn phí vận chuyển cho đơn từ 300k" },
-    { icon: "🎀", title: "Handmade 100%", subtitle: "Mỗi sản phẩm làm tay tỉ mỉ, không đại trà" },
-    { icon: "💝", title: "Đổi trả trong 7 ngày", subtitle: "Cam kết chất lượng, đổi trả dễ dàng" }
-  ];
+  const promoStrip =
+    hp.promoStrip && hp.promoStrip.length === 3
+      ? hp.promoStrip
+      : [
+          { icon: "🚚", title: "Freeship toàn quốc", subtitle: "Miễn phí vận chuyển cho đơn từ 300k." },
+          { icon: "🎁", title: "Gói quà chỉn chu", subtitle: "Đóng gói đẹp mắt để bạn tặng ngay không cần sửa soạn." },
+          { icon: "💝", title: "Đổi trả 7 ngày", subtitle: "Dễ dàng đổi mẫu nếu món đồ chưa đúng như mong đợi." },
+        ];
 
-  const newArrivalsTitle = hp.newArrivalsTitle || "Sản Phẩm Mới Trình Làng";
-  const newArrivalsTag = hp.newArrivalsTag || "🆕 Mới Nhất";
-  const bestSellersTitle = hp.bestSellersTitle || "Sản Phẩm Được Mua Nhiều Nhất";
-  const bestSellersTag = hp.bestSellersTag || "🔥 Bán Chạy";
-
+  const newArrivalsTitle = hp.newArrivalsTitle || "Mới lên kệ";
+  const bestSellersTitle = hp.bestSellersTitle || "Được khách chọn nhiều";
   const catEmojis = ["🌸", "🎀", "🦊", "✨", "🎁", "💖", "🌷", "🍓"];
 
   return (
-    <div className="container">
+    <div className="container" style={{ paddingBottom: "84px" }}>
+      <section className="home-hero-grid">
+        <div className="home-hero-main">
+          <img src={heroBannerImg} alt="Foxy Handmade" />
 
-      {/* ===== HERO ===== */}
-      <div id="hero" className="hero-section">
-        <div className="hero-main">
-          <img src={heroBannerImg} alt="Foxy Handmade — Bộ sưu tập mới" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-          <div className="hero-overlay">
-            <h1>{heroTitle}</h1>
-            <p>{heroSubtitle}</p>
-            <a href="#san-pham" className="btn btn-white">{heroCtaText} →</a>
+          <div className="home-hero-copy">
+            <div className="hero-copy-block">
+              <span className="hero-kicker">Bộ sưu tập tuyển chọn</span>
+              <h1 className="hero-copy-title">{heroTitle}</h1>
+              <p className="hero-copy-text">{heroSubtitle}</p>
+
+              <div className="hero-actions">
+                <Link href="/#new-arrivals" className="btn btn-white">
+                  {heroCtaText}
+                </Link>
+                <Link href={featuredProducts.length ? "/#featured-products" : "/search?q="} className="btn btn-outline">
+                  Xem sản phẩm nổi bật
+                </Link>
+              </div>
+            </div>
+
+            <div className="hero-stat-grid">
+              <div className="hero-stat-card">
+                <strong>{products.length}+</strong>
+                <span>Thiết kế đang có sẵn để bạn phối đồ hằng ngày.</span>
+              </div>
+              <div className="hero-stat-card">
+                <strong>{categories.length}</strong>
+                <span>Danh mục nhỏ xinh để tìm nhanh theo phong cách.</span>
+              </div>
+              <div className="hero-stat-card">
+                <strong>7 ngày</strong>
+                <span>Đổi trả dễ dàng nếu món quà chưa thật vừa ý.</span>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="hero-side">
-          <a href={banner1Cat} className="hero-banner">
+
+        <div className="home-hero-side">
+          <Link href={banner1Cat} className="hero-side-card">
             <img src={banner1Img} alt={banner1Text} />
-            <div className="hero-banner-overlay">
-              <h3>{banner1Text}</h3>
-              <span style={{ fontSize: "12px", opacity: 0.85, marginTop: "4px" }}>Xem ngay →</span>
-            </div>
-          </a>
-          <a href={banner2Cat} className="hero-banner">
+            <span className="hero-side-tag">Gợi ý phối nhanh</span>
+            <h2 className="hero-side-title">{banner1Text}</h2>
+            <p className="hero-side-text">
+              Những mẫu nhẹ nhàng, dễ đeo và phù hợp để làm quà tặng nhỏ đầy tinh tế.
+            </p>
+            <span className="hero-side-link">Xem ngay</span>
+          </Link>
+
+          <Link href={banner2Cat} className="hero-side-card">
             <img src={banner2Img} alt={banner2Text} />
-            <div className="hero-banner-overlay">
-              <h3>{banner2Text}</h3>
-              <span style={{ fontSize: "12px", opacity: 0.85, marginTop: "4px" }}>Xem ngay →</span>
-            </div>
-          </a>
+            <span className="hero-side-tag">Best pick tuần này</span>
+            <h2 className="hero-side-title">{banner2Text}</h2>
+            <p className="hero-side-text">
+              Thiết kế xinh, dễ phối và vừa đủ nổi bật để hoàn thiện một bộ đồ đơn giản.
+            </p>
+            <span className="hero-side-link">Khám phá danh mục</span>
+          </Link>
         </div>
-      </div>
+      </section>
 
-      {/* ===== CATEGORY CIRCLES ===== */}
-      <div className="category-circles">
-        {categories.map((c, i) => (
-          <a key={c.id} href={`/category/${c.id}`} className="category-circle-item">
-            <div className="circle-icon">{catEmojis[i % catEmojis.length]}</div>
-            <div className="circle-text">{c.name}</div>
-          </a>
-        ))}
-      </div>
-
-      {/* ===== PROMO STRIP ===== */}
-      <div className="promo-grid">
-        {promoStrip.map((item, i) => (
-          <div key={i} className="promo-card">
-            <div className="icon">{item.icon}</div>
-            <div><h4>{item.title}</h4><p>{item.subtitle}</p></div>
+      <section className="category-showcase">
+        <div className="category-showcase-header">
+          <div>
+            <span className="section-eyebrow">Mua theo cảm hứng</span>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "28px", lineHeight: 1.15 }}>
+              Chọn nhanh đúng kiểu bạn đang tìm
+            </h2>
           </div>
-        ))}
-      </div>
-
-      {/* ===== FEATURED (if any) ===== */}
-      {featuredIds.length > 0 && (() => {
-        const featuredProducts = featuredIds.map(id => products.find(p => p.id === id)).filter(Boolean);
-        if (!featuredProducts.length) return null;
-        return (
-          <div className="section-wrapper">
-            <div className="section-title">
-              <h2><span className="section-tag">⭐ Nổi Bật</span> Sản Phẩm Được Yêu Thích</h2>
-              <a href="/search?q=" className="view-all-link">Xem tất cả →</a>
-            </div>
-            <div className="product-grid">
-              {featuredProducts.map(p => (
-                <ProductCard key={p.id + "_ft"} p={p} catName={getCatName(p.categoryId)} badge={null} featured={true} />
-              ))}
-            </div>
-          </div>
-        );
-      })()}
-
-      {/* ===== NEW ARRIVALS ===== */}
-      <div id="san-pham" className="section-wrapper">
-        <div className="section-title">
-          <h2><span className="section-tag">{newArrivalsTag}</span> {newArrivalsTitle}</h2>
-          <a href="/search?q=" className="view-all-link">Xem tất cả →</a>
+          <Link href="/search?q=" className="view-all-link">
+            Xem toàn bộ sản phẩm
+          </Link>
         </div>
-        <div className="product-grid">
-          {newArrivals.map((p, i) => {
-            const featured = featuredIds.includes(p.id);
-            const badge = !featured ? (i === 0 ? "NEW" : i === 1 ? "HOT" : null) : null;
-            return <ProductCard key={p.id} p={p} catName={getCatName(p.categoryId)} badge={badge} featured={featured} />;
-          })}
-        </div>
-      </div>
 
-      {/* ===== BEST SELLERS ===== */}
-      <div id="ban-chay" className="section-wrapper" style={{ paddingBottom: "60px" }}>
-        <div className="section-title">
-          <h2><span className="section-tag">{bestSellersTag}</span> {bestSellersTitle}</h2>
-          <a href="/search?q=" className="view-all-link">Xem tất cả →</a>
-        </div>
-        <div className="product-grid">
-          {bestSellers.map(p => (
-            <ProductCard key={p.id + "_bc"} p={p} catName={getCatName(p.categoryId)} badge={null} featured={featuredIds.includes(p.id)} />
+        <div className="category-circles">
+          {categories.map((category, index) => (
+            <Link key={category.id} href={`/category/${category.id}`} className="category-circle-item">
+              <div className="circle-icon">{catEmojis[index % catEmojis.length]}</div>
+              <div className="circle-text">{category.name}</div>
+            </Link>
           ))}
         </div>
-      </div>
+      </section>
 
+      <section className="promo-grid">
+        {promoStrip.map((item) => (
+          <div key={item.title} className="promo-card">
+            <div className="icon">{item.icon}</div>
+            <div>
+              <h4>{item.title}</h4>
+              <p>{item.subtitle}</p>
+            </div>
+          </div>
+        ))}
+      </section>
+
+      {featuredProducts.length ? (
+        <section id="featured-products" className="section-shell-alt">
+          <div className="section-intro">
+            <div className="section-copy">
+              <span className="section-eyebrow">Bộ sưu tập được yêu thích</span>
+              <h2>Những món khách chọn nhiều khi muốn “đeo là xinh ngay”</h2>
+              <p>
+                Đây là nhóm sản phẩm phù hợp để bắt đầu nếu bạn muốn chọn nhanh một món dễ dùng,
+                dễ tặng và luôn tạo cảm giác được chăm chút.
+              </p>
+            </div>
+            <div className="section-note-card">
+              Shop đang ưu tiên các mẫu có form dễ phối và lên hình đẹp để bạn tìm quà nhanh hơn.
+            </div>
+          </div>
+
+          <div className="product-grid">
+            {featuredProducts.map((product) => (
+              <StoreProductCard
+                key={`featured-${product.id}`}
+                product={product}
+                categoryName={getCategoryName(product.categoryId)}
+                featured={true}
+                priorityNote="Khách yêu thích"
+              />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      <section id="new-arrivals" className="section-wrapper">
+        <div className="section-intro">
+          <div className="section-copy">
+            <span className="section-eyebrow">Vừa cập nhật</span>
+            <h2>{newArrivalsTitle}</h2>
+            <p>
+              Các mẫu mới nhất được đưa lên để bạn xem nhanh trong một chỗ, phù hợp cho những
+              lần ghé shop muốn tìm điều gì đó mới mẻ hơn thường ngày.
+            </p>
+          </div>
+          <Link href="/search?q=" className="view-all-link">
+            Xem tất cả
+          </Link>
+        </div>
+
+        <div className="product-grid">
+          {newArrivals.map((product, index) => {
+            const badge = index === 0 ? "Mới về" : index === 1 ? "Hot" : null;
+            return (
+              <StoreProductCard
+                key={product.id}
+                product={product}
+                categoryName={getCategoryName(product.categoryId)}
+                badge={featuredIds.includes(product.id) ? null : badge}
+                featured={featuredIds.includes(product.id)}
+                priorityNote={index < 3 ? "Lên kệ gần đây" : null}
+              />
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="section-shell-alt">
+        <div className="section-intro">
+          <div className="section-copy">
+            <span className="section-eyebrow">Khách quay lại nhiều nhất</span>
+            <h2>{bestSellersTitle}</h2>
+            <p>
+              Những thiết kế này thường được chọn vì vừa xinh, vừa “an toàn” để mua tặng, nên rất
+              hợp nếu bạn đang muốn tìm một món quà tinh tế mà không mất nhiều thời gian.
+            </p>
+          </div>
+          <div className="section-note-card">
+            Nếu chưa biết bắt đầu từ đâu, hãy ưu tiên nhóm bán chạy vì tỷ lệ khách hài lòng rất cao.
+          </div>
+        </div>
+
+        <div className="product-grid">
+          {bestSellers.map((product) => (
+            <StoreProductCard
+              key={`best-${product.id}`}
+              product={product}
+              categoryName={getCategoryName(product.categoryId)}
+              featured={featuredIds.includes(product.id)}
+              priorityNote="Được chọn nhiều"
+            />
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

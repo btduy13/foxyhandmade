@@ -1,26 +1,32 @@
-import { supabase } from '@/lib/supabase';
+import Link from "next/link";
+
 import AddToCartSection from "@/components/AddToCartSection";
 import ProductImageGallery from "@/components/ProductImageGallery";
 import ProductReviews from "@/components/ProductReviews";
-import { QuickAddBtn } from "@/components/AddToCartBtn";
+import StoreProductCard from "@/components/StoreProductCard";
+import { supabase } from "@/lib/supabase";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 async function getDb() {
-  const [categoriesRes, productsRes] = await Promise.all([
-    supabase.from('categories').select('*'),
-    supabase.from('products').select('*')
+  const [categoriesRes, productsRes, reviewsRes] = await Promise.all([
+    supabase.from("categories").select("*"),
+    supabase.from("products").select("*"),
+    supabase.from("reviews").select("*"),
   ]);
+
   return {
     categories: categoriesRes.data || [],
-    products: productsRes.data || []
+    products: productsRes.data || [],
+    reviews: reviewsRes.data || [],
   };
 }
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
   const db = await getDb();
-  const product = db.products.find(p => p.id === id);
+  const product = db.products.find((item) => item.id === id);
+
   if (!product) return { title: "Sản phẩm không tồn tại" };
   return { title: `${product.name} — Foxy Handmade`, description: product.description };
 }
@@ -28,132 +34,188 @@ export async function generateMetadata({ params }) {
 export default async function ProductDetails({ params }) {
   const { id } = await params;
   const db = await getDb();
-  const product = db.products.find(p => p.id === id);
+  const product = db.products.find((item) => item.id === id);
 
   if (!product) {
     return (
       <div className="container" style={{ padding: "80px 0", textAlign: "center" }}>
         <div style={{ fontSize: "64px", marginBottom: "16px" }}>😢</div>
         <h2 style={{ fontSize: "24px", marginBottom: "12px" }}>Sản phẩm không tìm thấy</h2>
-        <a href="/" className="btn" style={{ display: "inline-flex", marginTop: "16px" }}>← Về trang chủ</a>
+        <Link href="/" className="btn" style={{ display: "inline-flex", marginTop: "16px" }}>
+          Về trang chủ
+        </Link>
       </div>
     );
   }
 
-  const category = db.categories.find(c => c.id === product.categoryId);
+  const category = db.categories.find((item) => item.id === product.categoryId);
+  const productReviews = db.reviews.filter((review) => review.productId === product.id);
+  const reviewCount = productReviews.length;
+  const averageRating = reviewCount
+    ? (productReviews.reduce((sum, review) => sum + Number(review.rating || 0), 0) / reviewCount).toFixed(1)
+    : null;
+
   const outOfStock = !product.stock || Number(product.stock) === 0;
   const lowStock = Number(product.stock) > 0 && Number(product.stock) <= 5;
-  const related = db.products.filter(p => p.categoryId === product.categoryId && p.id !== product.id).slice(0, 5);
+  const relatedProducts = db.products
+    .filter((item) => item.categoryId === product.categoryId && item.id !== product.id)
+    .slice(0, 5);
+
+  const stockPill = outOfStock
+    ? { label: "Tạm hết hàng", className: "product-soft-pill is-red" }
+    : lowStock
+      ? { label: `Còn ${product.stock} sản phẩm`, className: "product-soft-pill is-amber" }
+      : { label: "Sẵn hàng để giao", className: "product-soft-pill is-green" };
 
   return (
-    <div className="container" style={{ paddingBottom: "80px" }}>
-      {/* Breadcrumb */}
+    <div className="container">
       <div className="breadcrumb">
-        <a href="/">Trang chủ</a>
+        <Link href="/">Trang chủ</Link>
         <span className="breadcrumb-sep">›</span>
-        {category && <><a href={`/category/${category.id}`}>{category.name}</a><span className="breadcrumb-sep">›</span></>}
+        {category ? (
+          <>
+            <Link href={`/category/${category.id}`}>{category.name}</Link>
+            <span className="breadcrumb-sep">›</span>
+          </>
+        ) : null}
         <span className="breadcrumb-current">{product.name}</span>
       </div>
 
-      {/* Main layout */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "56px", alignItems: "start" }}>
-
-        {/* Product Image Gallery */}
-        <div style={{ position: "sticky", top: "130px" }}>
+      <div className="product-detail-layout">
+        <div className="product-gallery-column">
           <ProductImageGallery imageUrl={product.imageUrl} images={product.images || []} />
-          {outOfStock && (
-            <div style={{ position: "absolute", top: "20px", left: "20px", background: "rgba(0,0,0,0.6)", color: "white", padding: "8px 16px", borderRadius: "8px", fontWeight: "700", zIndex: 10 }}>Tạm hết hàng</div>
-          )}
         </div>
 
-        {/* Product Info */}
-        <div>
-          <div style={{ fontSize: "13px", fontWeight: "700", color: "var(--brand-primary)", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "8px" }}>
-            {category ? <a href={`/category/${category.id}`} style={{ color: "var(--brand-primary)" }}>{category.name}</a> : "Uncategorized"}
-          </div>
+        <div className="product-info-column">
+          <section className="product-summary-card">
+            <div className="product-eyebrow">
+              {category ? <Link href={`/category/${category.id}`}>{category.name}</Link> : <span>Foxy Handmade</span>}
+            </div>
 
-          <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "32px", fontWeight: "700", color: "var(--text-primary)", lineHeight: 1.2, marginBottom: "16px" }}>
-            {product.name}
-          </h1>
+            <div className="product-rating-row">
+              {averageRating ? (
+                <>
+                  <span className="product-rating-stars">★ {averageRating}</span>
+                  <a href="#reviews" className="product-review-link">
+                    Dựa trên {reviewCount} đánh giá
+                  </a>
+                </>
+              ) : (
+                <span className="product-review-link">Chưa có đánh giá nào, bạn có thể là người đầu tiên.</span>
+              )}
+            </div>
 
-          <div style={{ fontSize: "34px", fontWeight: "900", color: "var(--brand-accent)", marginBottom: "16px" }}>
-            {Number(product.price).toLocaleString("vi-VN")}đ
-          </div>
+            <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "40px", lineHeight: 1.08, marginBottom: "14px" }}>
+              {product.name}
+            </h1>
 
-          {/* Stock status */}
-          <div style={{ marginBottom: "24px", display: "flex", alignItems: "center", gap: "8px" }}>
-            {outOfStock ? (
-              <span style={{ background: "#fee2e2", color: "#b91c1c", fontWeight: "700", fontSize: "13px", padding: "4px 12px", borderRadius: "var(--radius-pill)" }}>😢 Tạm hết hàng</span>
-            ) : lowStock ? (
-              <span style={{ background: "#fef3c7", color: "#92400e", fontWeight: "700", fontSize: "13px", padding: "4px 12px", borderRadius: "var(--radius-pill)" }}>⚡ Còn {product.stock} sản phẩm — Đặt ngay!</span>
-            ) : (
-              <span style={{ background: "#dcfce7", color: "#15803d", fontWeight: "700", fontSize: "13px", padding: "4px 12px", borderRadius: "var(--radius-pill)" }}>✓ Còn hàng</span>
-            )}
-          </div>
+            <div className="product-price-row">
+              <div style={{ fontSize: "38px", fontWeight: "900", color: "var(--brand-accent)" }}>
+                {Number(product.price).toLocaleString("vi-VN")}đ
+              </div>
+              <span className="product-soft-pill is-brown">Đóng gói đẹp mắt, phù hợp làm quà</span>
+            </div>
 
-          <p style={{ fontSize: "15px", color: "var(--text-secondary)", lineHeight: 1.9, marginBottom: "32px" }}>
-            {product.description}
-          </p>
+            <div className="product-pill-row">
+              <span className={stockPill.className}>{stockPill.label}</span>
+              <span className="product-soft-pill is-brown">Handmade 100%</span>
+              <span className="product-soft-pill is-brown">Freeship từ 300k</span>
+            </div>
 
-          <AddToCartSection product={product} />
+            <p className="product-intro">
+              {product.description ||
+                "Một thiết kế nhỏ xinh được hoàn thiện thủ công để bạn dễ phối đồ hằng ngày hoặc chọn làm món quà tinh tế cho người thương."}
+            </p>
 
-          {/* Trust badges */}
-          <div style={{ marginTop: "28px", padding: "20px 24px", background: "var(--bg-section)", borderRadius: "var(--radius-md)", border: "1px solid var(--border-light)" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
+            <div style={{ marginTop: "22px" }}>
+              <AddToCartSection product={product} />
+            </div>
+          </section>
+
+          <section className="product-support-card">
+            <div className="section-eyebrow">Vì sao khách yên tâm chọn món này</div>
+            <div className="product-promise-grid">
               {[
-                ["🎀", "Handmade 100%", "Làm tay tỉ mỉ, không hàng loạt"],
-                ["🚚", "Freeship từ 300k", "Giao hàng toàn quốc"],
-                ["🔄", "Đổi trả 7 ngày", "Không hài lòng, hoàn tiền"],
-                ["💝", "Đóng gói xinh xắn", "Hộp quà cẩn thận"],
-              ].map(([icon, title, desc]) => (
-                <div key={title} style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
-                  <span style={{ fontSize: "20px", flexShrink: 0 }}>{icon}</span>
-                  <div>
-                    <div style={{ fontWeight: "700", fontSize: "13px", color: "var(--text-primary)" }}>{title}</div>
-                    <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>{desc}</div>
-                  </div>
+                ["🎀", "Làm tay tỉ mỉ", "Từng chi tiết được hoàn thiện thủ công thay vì sản xuất đại trà."],
+                ["🚚", "Giao toàn quốc", "Shop hỗ trợ lên đơn nhanh và đóng gói cẩn thận trước khi gửi đi."],
+                ["🔁", "Đổi trả 7 ngày", "Nếu sản phẩm có vấn đề hoặc chưa đúng mô tả, bạn có thể đổi lại dễ dàng."],
+                ["💌", "Hỗ trợ tặng quà", "Nhắn shop nếu bạn cần gợi ý phối quà hoặc chọn món phù hợp dịp đặc biệt."],
+              ].map(([icon, title, description]) => (
+                <div key={title} className="product-meta-card">
+                  <div style={{ fontSize: "22px", marginBottom: "10px" }}>{icon}</div>
+                  <strong>{title}</strong>
+                  <p>{description}</p>
                 </div>
               ))}
             </div>
-          </div>
+          </section>
+
+          <section className="product-story-card">
+            <div className="section-eyebrow">Thông tin nhanh</div>
+            <div className="product-meta-grid">
+              <div className="product-meta-card">
+                <strong>Danh mục</strong>
+                <span>{category?.name || "Phụ kiện handmade"}</span>
+              </div>
+              <div className="product-meta-card">
+                <strong>Phù hợp khi</strong>
+                <span>Đi học, đi làm, gặp bạn bè hoặc chọn làm quà nhỏ xinh.</span>
+              </div>
+              <div className="product-meta-card">
+                <strong>Tình trạng</strong>
+                <span>{outOfStock ? "Hiện chưa có sẵn" : `Còn ${product.stock || "nhiều"} sản phẩm trong kho`}</span>
+              </div>
+              <div className="product-meta-card">
+                <strong>Gợi ý tiếp theo</strong>
+                <span>
+                  {category ? (
+                    <Link href={`/category/${category.id}`} style={{ textDecoration: "underline" }}>
+                      Xem thêm sản phẩm cùng danh mục
+                    </Link>
+                  ) : (
+                    "Khám phá thêm các mẫu cùng phong cách ở trang sản phẩm."
+                  )}
+                </span>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
 
-      {/* Reviews Section */}
-      <ProductReviews productId={product.id} />
+      <section id="reviews">
+        <ProductReviews productId={product.id} />
+      </section>
 
-      {/* Related Products */}
-      {related.length > 0 && (
-        <div style={{ marginTop: "64px" }}>
-          <div className="section-title">
-            <h2><span className="section-tag">💝 Có thể thích</span> Sản Phẩm Tương Tự</h2>
+      {relatedProducts.length ? (
+        <section className="section-shell-alt" style={{ marginBottom: "84px" }}>
+          <div className="section-intro">
+            <div className="section-copy">
+              <span className="section-eyebrow">Có thể bạn cũng thích</span>
+              <h2>Những mẫu cùng gu với món bạn đang xem</h2>
+              <p>
+                Nếu bạn đang chọn một set quà hoặc muốn phối cùng phong cách, đây là các thiết kế ở
+                cùng danh mục được khách thường xem tiếp.
+              </p>
+            </div>
+            {category ? (
+              <Link href={`/category/${category.id}`} className="view-all-link">
+                Xem cả danh mục
+              </Link>
+            ) : null}
           </div>
+
           <div className="product-grid">
-            {related.map(p => {
-              const outOS = !p.stock || Number(p.stock) === 0;
-              const catName = db.categories.find(c => c.id === p.categoryId)?.name || "";
-              return (
-                <div key={p.id} className="product-card">
-                  <a href={`/products/${p.id}`} style={{ textDecoration: "none" }}>
-                    <div className="product-image-wrap">
-                      {outOS && <div className="out-of-stock-overlay"><span className="out-of-stock-label">Hết hàng</span></div>}
-                      <img src={p.imageUrl} alt={p.name} className="product-image" />
-                      <div className="product-cart-overlay"><QuickAddBtn product={p} /></div>
-                    </div>
-                    <div className="product-info">
-                      <div className="product-category-tag">{catName}</div>
-                      <h3 className="product-title">{p.name}</h3>
-                      <div className="product-bottom">
-                        <span className="product-price">{Number(p.price).toLocaleString("vi-VN")}đ</span>
-                      </div>
-                    </div>
-                  </a>
-                </div>
-              );
-            })}
+            {relatedProducts.map((item) => (
+              <StoreProductCard
+                key={item.id}
+                product={item}
+                categoryName={category?.name || ""}
+                priorityNote="Cùng phong cách"
+              />
+            ))}
           </div>
-        </div>
-      )}
+        </section>
+      ) : null}
     </div>
   );
 }

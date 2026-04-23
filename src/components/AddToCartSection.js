@@ -1,7 +1,10 @@
 "use client";
-import { useCart } from "@/context/CartContext";
-import { WishlistBtn } from "@/components/AddToCartBtn";
+
+import Link from "next/link";
 import { useState } from "react";
+
+import { WishlistBtn } from "@/components/AddToCartBtn";
+import { useCart } from "@/context/CartContext";
 
 export default function AddToCartSection({ product }) {
   const { addToCart } = useCart();
@@ -16,56 +19,83 @@ export default function AddToCartSection({ product }) {
     setTimeout(() => setAdded(false), 2000);
   };
 
-  const counterStyle = {
-    display: "flex",
-    alignItems: "center",
-    border: "1.5px solid var(--border-color)",
-    borderRadius: "var(--radius-pill)",
-    overflow: "hidden",
-    width: "fit-content",
-    marginBottom: "20px",
-  };
-
   return (
-    <div>
-      {/* Quantity */}
-      <p style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-muted)", marginBottom: "10px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Số lượng</p>
-      <div style={counterStyle}>
-        <button
-          onClick={() => setQty(q => Math.max(1, q - 1))}
-          disabled={outOfStock}
-          style={{ padding: "10px 18px", border: "none", background: "var(--bg-section)", cursor: "pointer", fontSize: "18px", fontWeight: "700", color: "var(--text-secondary)", transition: "background 0.15s" }}
-        >−</button>
-        <span style={{ padding: "10px 20px", fontWeight: "800", fontSize: "16px", color: "var(--text-primary)", minWidth: "50px", textAlign: "center" }}>{qty}</span>
-        <button
-          onClick={() => setQty(q => q + 1)}
-          disabled={outOfStock}
-          style={{ padding: "10px 18px", border: "none", background: "var(--bg-section)", cursor: "pointer", fontSize: "18px", fontWeight: "700", color: "var(--text-secondary)", transition: "background 0.15s" }}
-        >+</button>
+    <div className="cart-cta-shell">
+      <div className="qty-label-row">
+        <p>Số lượng</p>
+        <span>{outOfStock ? "Tạm hết hàng" : "Có thể điều chỉnh sau trong giỏ hàng"}</span>
       </div>
 
-      {/* Buttons */}
-      <div style={{ display: "flex", gap: "12px", marginBottom: "16px", alignItems: "center" }}>
+      <div className="qty-stepper">
+        <button type="button" onClick={() => setQty((value) => Math.max(1, value - 1))} disabled={outOfStock}>
+          −
+        </button>
+        <span className="qty-stepper-value">{qty}</span>
+        <button type="button" onClick={() => setQty((value) => value + 1)} disabled={outOfStock}>
+          +
+        </button>
+      </div>
+
+      <div className="cart-cta-row">
         <button
+          type="button"
           onClick={handleAdd}
           disabled={outOfStock}
-          className="btn"
-          style={{ flex: 1, padding: "14px", fontSize: "15px", opacity: outOfStock ? 0.5 : 1, cursor: outOfStock ? "not-allowed" : "pointer", background: "var(--brand-accent)" }}
+          className="btn btn-accent"
+          style={{
+            flex: 1,
+            minHeight: "52px",
+            opacity: outOfStock ? 0.58 : 1,
+            cursor: outOfStock ? "not-allowed" : "pointer",
+          }}
         >
-          {outOfStock ? "😢 Hết hàng" : added ? "✓ Đã thêm!" : "🛒 Thêm vào giỏ"}
+          {outOfStock ? "Hết hàng" : added ? `Đã thêm ${qty} sản phẩm` : "Thêm vào giỏ"}
         </button>
-        <a href="/cart" className="btn btn-outline" style={{ flex: 1, padding: "14px", fontSize: "15px", textAlign: "center", textDecoration: "none" }}>
-          Mua ngay →
-        </a>
-        <WishlistBtn product={product} style={{ width: "48px", height: "48px", background: "white", border: "1.5px solid var(--border-color)" }} />
+
+        <Link href="/cart" className="btn btn-outline buy-now-link">
+          Mua ngay
+        </Link>
+
+        <WishlistBtn
+          product={product}
+          style={{
+            width: "52px",
+            height: "52px",
+            borderRadius: "16px",
+            background: "#fff",
+            border: "1px solid rgba(107, 45, 31, 0.12)",
+            boxShadow: "none",
+          }}
+        />
       </div>
 
-      {added && (
-        <div style={{ background: "#dcfce7", color: "#15803d", padding: "12px 16px", borderRadius: "var(--radius-sm)", fontSize: "13px", fontWeight: "600", display: "flex", gap: "10px", alignItems: "center", animation: "slideIn 0.3s ease" }}>
-          <span>✓ Đã thêm {qty} sản phẩm vào giỏ hàng!</span>
-          <a href="/cart" style={{ color: "#15803d", fontWeight: "800", textDecoration: "underline", marginLeft: "auto" }}>Xem giỏ →</a>
+      <div className="cart-cta-note">
+        <span>Giao toàn quốc từ 2–5 ngày</span>
+        <span>Đóng gói đẹp như quà tặng</span>
+        <span>Hỗ trợ đổi trả trong 7 ngày</span>
+      </div>
+
+      {added ? (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "12px",
+            padding: "12px 14px",
+            borderRadius: "16px",
+            background: "#dcfce7",
+            color: "#166534",
+            fontSize: "13px",
+            fontWeight: "800",
+          }}
+        >
+          <span>Đã thêm {qty} sản phẩm vào giỏ hàng của bạn.</span>
+          <Link href="/cart" style={{ textDecoration: "underline" }}>
+            Xem giỏ
+          </Link>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

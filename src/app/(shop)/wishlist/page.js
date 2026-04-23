@@ -1,72 +1,77 @@
 "use client";
+
+import Link from "next/link";
+
+import StoreProductCard from "@/components/StoreProductCard";
 import { useWishlist } from "@/context/WishlistContext";
-import { QuickAddBtn } from "@/components/AddToCartBtn";
 
 export default function WishlistPage() {
   const { items, toggleWishlist } = useWishlist();
 
   return (
-    <div className="container" style={{ paddingBottom: "80px" }}>
+    <div className="container" style={{ paddingBottom: "84px" }}>
       <div className="breadcrumb">
-        <a href="/">Trang chủ</a>
+        <Link href="/">Trang chủ</Link>
         <span className="breadcrumb-sep">›</span>
         <span className="breadcrumb-current">Yêu thích</span>
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "32px" }}>
-        <h1 style={{ fontSize: "24px", fontWeight: "800", textTransform: "uppercase", color: "var(--text-primary)" }}>
-          ❤️ Sản phẩm yêu thích ({items.length})
-        </h1>
-        {items.length > 0 && (
-          <a href="/" style={{ color: "var(--text-muted)", fontSize: "14px" }}>← Tiếp tục mua sắm</a>
-        )}
-      </div>
+      <section className="listing-hero" style={{ marginBottom: "24px" }}>
+        <span className="section-eyebrow">Danh sách lưu lại</span>
+        <h1 className="listing-hero-title">Những món bạn muốn quay lại xem</h1>
+        <p className="listing-hero-subtitle">
+          Wishlist giúp bạn giữ lại các mẫu đang cân nhắc để so sánh hoặc chọn làm quà vào lúc thuận tiện hơn.
+        </p>
+        <div className="listing-hero-stats">
+          <span className="listing-stat-pill">{items.length} sản phẩm đang lưu</span>
+          <span className="listing-stat-pill">Chạm vào trái tim để bỏ khỏi danh sách</span>
+        </div>
+      </section>
 
       {items.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "80px 20px" }}>
-          <div style={{ fontSize: "64px", marginBottom: "16px" }}>🤍</div>
-          <h2 style={{ fontSize: "22px", color: "var(--text-muted)", marginBottom: "12px" }}>Chưa có sản phẩm yêu thích</h2>
-          <p style={{ color: "var(--text-muted)", marginBottom: "28px", fontSize: "15px" }}>
-            Nhấn biểu tượng ❤️ trên bất kỳ sản phẩm nào để thêm vào đây.
+        <div className="empty-state-card">
+          <div style={{ fontSize: "54px", marginBottom: "10px" }}>🤍</div>
+          <strong>Wishlist của bạn vẫn đang trống</strong>
+          <p>
+            Khi thấy một món ưng ý, hãy nhấn vào biểu tượng trái tim để giữ lại ở đây và so sánh sau.
           </p>
-          <a href="/" className="btn">← Khám phá sản phẩm</a>
+          <Link href="/search?q=" className="btn">
+            Khám phá sản phẩm
+          </Link>
         </div>
       ) : (
         <div className="product-grid">
-          {items.map(p => {
-            const outOfStock = !p.stock || Number(p.stock) === 0;
-            return (
-              <div key={p.id} className="product-card" style={{ position: "relative" }}>
-                {/* Remove from wishlist */}
+          {items.map((product) => (
+            <StoreProductCard
+              key={product.id}
+              product={product}
+              priorityNote="Đã lưu"
+              topAction={
                 <button
-                  onClick={() => toggleWishlist(p)}
+                  type="button"
+                  onClick={() => toggleWishlist(product)}
                   title="Xóa khỏi yêu thích"
                   style={{
-                    position: "absolute", top: "10px", right: "10px", zIndex: 10,
-                    width: "32px", height: "32px", borderRadius: "50%",
-                    background: "rgba(255,255,255,0.9)", border: "none",
-                    cursor: "pointer", fontSize: "16px", display: "flex",
-                    alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                    position: "absolute",
+                    top: "12px",
+                    right: "12px",
+                    zIndex: 10,
+                    width: "36px",
+                    height: "36px",
+                    borderRadius: "50%",
+                    border: "none",
+                    background: "rgba(255,255,255,0.92)",
+                    color: "#d14363",
+                    boxShadow: "0 12px 24px rgba(45, 18, 8, 0.12)",
+                    cursor: "pointer",
+                    fontSize: "16px",
                   }}
                 >
-                  ❤️
+                  ❤
                 </button>
-                <a href={`/products/${p.id}`} style={{ textDecoration: "none" }}>
-                  <div className="product-image-wrap">
-                    {outOfStock && <div className="out-of-stock-overlay"><span className="out-of-stock-label">Hết hàng</span></div>}
-                    <img src={p.imageUrl} alt={p.name} className="product-image" />
-                    <div className="product-cart-overlay"><QuickAddBtn product={p} /></div>
-                  </div>
-                  <div className="product-info">
-                    <h3 className="product-title">{p.name}</h3>
-                    <div className="product-bottom">
-                      <span className="product-price">{Number(p.price).toLocaleString("vi-VN")}đ</span>
-                    </div>
-                  </div>
-                </a>
-              </div>
-            );
-          })}
+              }
+            />
+          ))}
         </div>
       )}
     </div>

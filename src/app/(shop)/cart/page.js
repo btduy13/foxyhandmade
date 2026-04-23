@@ -36,12 +36,13 @@ export default function CartPage() {
 
   const handleApplyCoupon = async () => {
     setCouponError("");
-    if (!couponCode) return;
+    const normalizedCode = couponCode.trim();
+    if (!normalizedCode) return;
 
     try {
-      const res = await fetch(`/api/coupons`);
+      const res = await fetch(`/api/coupons?code=${encodeURIComponent(normalizedCode)}`);
       const coupons = await res.json();
-      const coupon = coupons.find(c => c.code.toUpperCase() === couponCode.toUpperCase() && c.active);
+      const coupon = coupons[0];
 
       if (!coupon) {
         setCouponError("Mã giảm giá không hợp lệ hoặc đã hết hạn.");

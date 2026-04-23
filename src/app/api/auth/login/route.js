@@ -1,31 +1,63 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
+
+import {
+  ADMIN_SESSION_COOKIE,
+  LEGACY_ADMIN_COOKIE,
+  createAdminSessionToken,
+  getAdminAuthErrorMessage,
+  getAdminSessionCookieOptions,
+  isValidAdminPassword,
+} from "@/lib/admin-session";
 
 export async function POST(request) {
   try {
-    const { password } = await request.json();
-
-    // In a real app, reading from process.env is preferred
-    const adminPassword = process.env.ADMIN_PASSWORD || 'foxy123';
-
-    if (password === adminPassword) {
-      const response = NextResponse.json({ success: true, message: 'Đăng nhập thành công' });
-      
-      // Set the authentication cookie
-      response.cookies.set({
-        name: 'foxy_admin_token',
-        value: 'authenticated',
-        httpOnly: true, // Prevent XSS reading the cookie
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-        maxAge: 7 * 24 * 60 * 60, // 7 days
-      });
-      
-      return response;
-    } else {
-      return NextResponse.json({ success: false, message: 'Mật khẩu không chính xác' }, { status: 401 });
+    const authError = getAdminAuthErrorMessage();
+    if (authError) {
+      return NextResponse.json(
+        { success: false, message: authError },
+        { status: 500 }
+      );
     }
+
+    const { password } = await request.json();
+    if (!isValidAdminPassword(password)) {
+      return NextResponse.json(
+        { success: false, message: "Incorrect password" },
+        { status: 401 }
+      );
+    }
+
+    const token = createAdminSessionToken();
+    if (!token) {
+      return NextResponse.json(
+        { success: false, message: "Unable to create an admin session" },
+        { status: 500 }
+      );
+    }
+
+    const response = NextResponse.json({
+      success: true,
+      message: "Login successful",
+    });
+
+    response.cookies.set({
+      name: ADMIN_SESSION_COOKIE,
+      value: token,
+      ...getAdminSessionCookieOptions(),
+    });
+
+    response.cookies.set({
+      name: LEGACY_ADMIN_COOKIE,
+      value: "",
+      ...getAdminSessionCookieOptions(),
+      maxAge: 0,
+    });
+
+    return response;
   } catch (error) {
-    return NextResponse.json({ success: false, message: 'Có lỗi xảy ra' }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Unable to process the login request" },
+      { status: 500 }
+    );
   }
 }

@@ -1,16 +1,16 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
+
+import { clearAdminSession } from "@/lib/admin-session";
 
 export async function POST() {
-  const response = NextResponse.json({ success: true, message: 'Đã đăng xuất' });
-  
-  // Clear the cookie by setting maxAge to 0
-  response.cookies.set({
-    name: 'foxy_admin_token',
-    value: '',
-    httpOnly: true,
-    path: '/',
-    maxAge: 0,
+  const response = NextResponse.json({
+    success: true,
+    message: "Logged out",
   });
-  
-  return response;
+
+  return clearAdminSession(response);
+}
+
+export async function DELETE() {
+  return POST();
 }
