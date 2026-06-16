@@ -115,7 +115,7 @@ export default function ContactPage() {
                     <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "var(--text-secondary)", marginBottom: "6px" }}>
                       Số điện thoại
                     </label>
-                    <input type="tel" style={inputStyle} value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="0987 654 321" />
+                    <input type="tel" style={inputStyle} value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="0355 649 229" />
                   </div>
                 </div>
                 <div>

@@ -387,8 +387,8 @@ export default function ShopHeader({ categories = [] }) {
             <p>
               Tư vấn phối quà, đóng gói xinh xắn và giao toàn quốc trong tuần.
             </p>
-            <a href="tel:0987654321" style={{ display: "inline-flex", marginTop: "10px", fontWeight: "900" }}>
-              0987.654.321
+            <a href="tel:+84355649229" style={{ display: "inline-flex", marginTop: "10px", fontWeight: "900" }}>
+              0355.649.229
             </a>
           </div>
         </aside>
@@ -527,9 +527,9 @@ export default function ShopHeader({ categories = [] }) {
             })}
           </div>
 
-          <a href="tel:0987654321" className="hotline-text">
+          <a href="tel:+84355649229" className="hotline-text">
             <span>📞</span>
-            <span>0987.654.321</span>
+            <span>0355.649.229</span>
           </a>
         </div>
       </nav>
