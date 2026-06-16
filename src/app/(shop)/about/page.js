@@ -117,7 +117,7 @@ export default function AboutPage() {
       </section>
 
       {/* Services Section */}
-      <section className="section-shell-alt" style={{ padding: "60px 0" }}>
+      <section className="section-shell-alt">
         <div className="section-intro" style={{ marginBottom: "40px" }}>
           <div className="section-copy">
             <span className="section-eyebrow">Hoạt động tại Foxy</span>
@@ -168,7 +168,7 @@ export default function AboutPage() {
       </section>
 
       {/* Achievements Section */}
-      <section className="section-shell-alt" style={{ padding: "60px 0" }}>
+      <section className="section-shell-alt">
         <div className="section-intro" style={{ marginBottom: "40px" }}>
           <div className="section-copy">
             <span className="section-eyebrow">Hợp tác & Thành tựu</span>
