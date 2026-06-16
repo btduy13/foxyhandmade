@@ -65,10 +65,10 @@ export default async function ShopLayout({ children }) {
                 Những món phụ kiện dịu dàng, được làm tay cẩn thận để bạn dễ dàng chọn một
                 món quà nhỏ cho chính mình hoặc cho người thương.
               </p>
-              <address style={{ marginTop: "18px" }}>
-                <div>123 Đường X, Quận Y, TP.HCM</div>
-                <div>0987.654.321</div>
-                <div>hello@foxyhandmade.com</div>
+              <address style={{ marginTop: "18px", fontStyle: "normal" }}>
+                <div>246 Nguyen An Ninh Street, Ward Tam Thang, Ho Chi Minh City</div>
+                <div>+84 355649229</div>
+                <div>taylordameow@gmail.com</div>
               </address>
               <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "18px" }}>
                 {socials.map((item) => (
@@ -112,8 +112,8 @@ export default async function ShopLayout({ children }) {
               <h3>Hỗ trợ</h3>
               <Link href="/about">Về chúng tôi</Link>
               <Link href="/contact">Liên hệ</Link>
-              <a href="tel:0987654321">Gọi tư vấn nhanh</a>
-              <a href="mailto:hello@foxyhandmade.com">Email hỗ trợ</a>
+              <a href="tel:+84355649229">Gọi tư vấn nhanh</a>
+              <a href="mailto:taylordameow@gmail.com">Email hỗ trợ</a>
             </div>
           </div>
 

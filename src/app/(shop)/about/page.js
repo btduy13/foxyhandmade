@@ -111,7 +111,7 @@ export default function AboutPage() {
             <p>
               "Chúng tôi không làm hàng loạt. Chúng tôi làm từng sản phẩm với tất cả tình yêu."
             </p>
-            <span>Người sáng lập Foxy Handmade</span>
+            <span>Ri My Quyen — Sáng lập Foxy Handmade</span>
           </div>
         </div>
       </section>

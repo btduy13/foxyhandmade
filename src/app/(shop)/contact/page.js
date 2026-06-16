@@ -53,12 +53,13 @@ export default function ContactPage() {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1.5fr", gap: "48px", alignItems: "start" }}>
         {/* Info */}
         <div>
+          <BusinessCard />
           <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
             {[
-              { icon: "📍", title: "Địa chỉ", lines: ["123 Đường X, Quận Y, TP.HCM"] },
-              { icon: "📞", title: "Điện thoại", lines: ["0987.654.321", "(Thứ 2 – Thứ 7, 9:00–21:00)"] },
-              { icon: "✉️", title: "Email", lines: ["hello@foxyhandmade.com"] },
-              { icon: "📘", title: "Facebook", lines: ["facebook.com/foxyhandmade"] },
+              { icon: "📍", title: "Địa chỉ", lines: ["246 Nguyen An Ninh Street, Ward Tam Thang, Ho Chi Minh city, Viet Nam. ( old Vung Tau city )"] },
+              { icon: "📞", title: "Điện thoại", lines: ["+84 355649229", "(Ri My Quyen - Founder & Owner)"] },
+              { icon: "✉️", title: "Email", lines: ["taylordameow@gmail.com"] },
+              { icon: "📘", title: "Facebook", lines: ["facebook.com/meodeobong"] },
             ].map(info => (
               <div key={info.title} style={{
                 display: "flex", gap: "16px", alignItems: "flex-start",
@@ -145,6 +146,77 @@ export default function ContactPage() {
               </div>
             </form>
           )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BusinessCard() {
+  return (
+    <div style={{
+      width: "100%",
+      maxWidth: "480px",
+      margin: "0 auto 24px",
+      border: "1.5px solid #000000",
+      backgroundColor: "#ffffff",
+      display: "flex",
+      boxSizing: "border-box",
+      fontFamily: "Georgia, 'Times New Roman', serif",
+      boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+      overflow: "hidden",
+      borderRadius: "4px"
+    }}>
+      {/* Left side Logo */}
+      <div style={{
+        width: "130px",
+        backgroundColor: "#802e1b",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "#ffffff",
+        padding: "16px 8px",
+        borderRight: "1.5px solid #000000",
+        flexShrink: 0,
+        boxSizing: "border-box"
+      }}>
+        {/* SVG Fox Logo */}
+        <svg viewBox="0 0 100 100" width="70" height="70" style={{ display: "block", marginBottom: "6px" }}>
+          <path d="M30 40 L35 20 L46 33 L54 33 L65 20 L70 40 C72 50 68 56 50 56 C32 56 28 50 30 40 Z" fill="white" />
+          <path d="M22 45 C20 60 30 72 50 72 C70 72 80 60 78 45 C75 58 65 67 50 67 C35 67 25 58 22 45 Z" fill="white" />
+          <circle cx="50" cy="32" r="3.5" fill="#802e1b" />
+          <path d="M47 38 C49 39 51 39 53 38" stroke="#802e1b" stroke-width="1" fill="none" />
+          <path d="M37 44 C39 46 41 46 43 44" stroke="#802e1b" stroke-width="1.5" fill="none" stroke-linecap="round" />
+          <path d="M63 44 C61 46 59 46 57 44" stroke="#802e1b" stroke-width="1.5" fill="none" stroke-linecap="round" />
+          <circle cx="50" cy="49" r="2" fill="#802e1b" />
+        </svg>
+        <div style={{ fontSize: "6px", letterSpacing: "1.5px", color: "rgba(255,255,255,0.8)", textTransform: "uppercase", fontWeight: "300", lineHeight: 1 }}>Tiệm Bông</div>
+        <div style={{ fontSize: "8.5px", fontWeight: "bold", letterSpacing: "1.2px", textTransform: "uppercase", marginTop: "2px", lineHeight: 1 }}>FOXY HANDMADE</div>
+      </div>
+
+      {/* Right side Text Info */}
+      <div style={{
+        flex: 1,
+        padding: "16px 20px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        color: "#000000",
+        textAlign: "left",
+        boxSizing: "border-box"
+      }}>
+        <div style={{ fontSize: "19px", fontWeight: "bold", color: "#000000", fontFamily: "Georgia, serif", marginBottom: "2px", letterSpacing: "0.5px" }}>
+          Ri My Quyen
+        </div>
+        <div style={{ fontSize: "10.5px", fontStyle: "italic", color: "#444444", marginBottom: "12px", fontFamily: "Georgia, serif", whiteSpace: "nowrap" }}>
+          Founder & Owner | Foxy Handmade & Workshop
+        </div>
+        <div style={{ fontSize: "11px", color: "#000000", marginBottom: "4px" }}>
+          <strong>Tel:</strong> <a href="tel:+84355649229" style={{ color: "#0000ff", textDecoration: "underline" }}>+84 355649229</a>
+        </div>
+        <div style={{ fontSize: "10.5px", color: "#000000", lineHeight: "1.4" }}>
+          <strong>Add:</strong> 246 Nguyen An Ninh Street, Ward Tam Thang, Ho Chi Minh city, Viet Nam. ( old Vung Tau city )
         </div>
       </div>
     </div>
