@@ -68,7 +68,7 @@ export default async function ShopLayout({ children }) {
               <address style={{ marginTop: "18px", fontStyle: "normal" }}>
                 <div>246 Nguyen An Ninh Street, Ward Tam Thang, Ho Chi Minh City</div>
                 <div>+84 355649229</div>
-                <div>taylordameow@gmail.com</div>
+                <div>quyen.rimy.vungtau@gmail.com</div>
               </address>
               <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "18px" }}>
                 {socials.map((item) => (
@@ -113,7 +113,7 @@ export default async function ShopLayout({ children }) {
               <Link href="/about">Về chúng tôi</Link>
               <Link href="/contact">Liên hệ</Link>
               <a href="tel:+84355649229">Gọi tư vấn nhanh</a>
-              <a href="mailto:taylordameow@gmail.com">Email hỗ trợ</a>
+              <a href="mailto:quyen.rimy.vungtau@gmail.com">Email hỗ trợ</a>
             </div>
           </div>
 

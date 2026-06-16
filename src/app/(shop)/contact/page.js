@@ -58,7 +58,7 @@ export default function ContactPage() {
             {[
               { icon: "📍", title: "Địa chỉ", lines: ["246 Nguyen An Ninh Street, Ward Tam Thang, Ho Chi Minh city, Viet Nam. ( old Vung Tau city )"] },
               { icon: "📞", title: "Điện thoại", lines: ["+84 355649229", "(Ri My Quyen - Founder & Owner)"] },
-              { icon: "✉️", title: "Email", lines: ["taylordameow@gmail.com"] },
+              { icon: "✉️", title: "Email", lines: ["quyen.rimy.vungtau@gmail.com"] },
               { icon: "📘", title: "Facebook", lines: ["facebook.com/meodeobong"] },
             ].map(info => (
               <div key={info.title} style={{

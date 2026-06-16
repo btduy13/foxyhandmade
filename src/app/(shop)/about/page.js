@@ -2,50 +2,49 @@ import Image from "next/image";
 import Link from "next/link";
 import AboutGalleryClient from "@/components/AboutGalleryClient";
 
-
 export const metadata = {
-  title: "Về Chúng Tôi — Foxy Handmade",
+  title: "Về Chúng Tôi — Foxy Handmade & Workshop",
   description:
-    "Câu chuyện về Foxy Handmade — thương hiệu phụ kiện thủ công handmade với tình yêu và tâm huyết.",
+    "Tìm hiểu câu chuyện về Foxy Handmade & Workshop — tiệm thủ công mỹ nghệ, lớp học workshop dạy làm đồ handmade tại TP.HCM.",
 };
 
 const values = [
   {
-    icon: "🎨",
-    title: "Thiết kế có cá tính",
-    desc: "Mỗi mẫu được lên ý tưởng riêng để bạn đeo hằng ngày vẫn thấy có điểm nhấn rất Foxy.",
+    icon: "🦊",
+    title: "Độc bản & Dấu ấn riêng",
+    desc: "Đồ handmade mang dấu ấn cá nhân, gần như không có hai sản phẩm nào giống hoàn toàn nhau.",
   },
   {
-    icon: "💎",
-    title: "Chọn chất liệu kỹ",
-    desc: "Tụi mình ưu tiên nguyên liệu bền, nhẹ và đủ an toàn để món phụ kiện dùng lâu vẫn đẹp.",
-  },
-  {
-    icon: "🌱",
-    title: "Tử tế với môi trường",
-    desc: "Bao bì và cách đóng gói được tiết chế để vừa xinh vừa hạn chế lãng phí không cần thiết.",
-  },
-  {
-    icon: "🧵",
-    title: "Làm tay tỉ mỉ",
-    desc: "Không làm hàng loạt. Mỗi sản phẩm đều được hoàn thiện cẩn thận qua từng công đoạn nhỏ.",
-  },
-  {
-    icon: "🚚",
-    title: "Gửi đi chỉn chu",
-    desc: "Đóng gói đẹp như quà tặng và hỗ trợ giao toàn quốc để bạn yên tâm đặt cho mình hay cho người thương.",
+    icon: "⏳",
+    title: "Công sức & Kỹ thuật",
+    desc: "Mỗi món đồ nhỏ đều chứa đựng thời gian, công sức và kỹ năng thủ công tỉ mỉ của người làm.",
   },
   {
     icon: "🤍",
-    title: "Hỗ trợ thật lòng",
-    desc: "Nếu bạn phân vân quà tặng hay cần chọn mẫu phù hợp, shop luôn sẵn sàng tư vấn nhanh gọn.",
+    title: "Giá trị cảm xúc cao",
+    desc: "Được tạo ra với sự chăm chút và câu chuyện riêng biệt, mang lại cảm giác ấm áp, có tâm cho người nhận.",
+  },
+  {
+    icon: "🎁",
+    title: "Cá nhân hóa quà tặng",
+    desc: "Nhiều sản phẩm có thể tùy chỉnh theo tên, màu sắc, sở thích hoặc kỷ niệm riêng của bạn.",
+  },
+  {
+    icon: "🎨",
+    title: "Nghệ thuật truyền thống",
+    desc: "Góp phần lưu giữ nét đẹp nghệ thuật và kỹ năng thủ công qua việc chế tác bằng tay.",
+  },
+  {
+    icon: "💎",
+    title: "Giá trị độc bản",
+    desc: "Đối với người sưu tầm, đồ handmade mang giá trị sưu tập cao và rất khó để thay thế.",
   },
 ];
 
 const stats = [
-  { num: "500+", label: "Khách hàng hài lòng" },
-  { num: "1000+", label: "Sản phẩm đã được chọn" },
-  { num: "50+", label: "Mẫu thiết kế riêng" },
+  { num: "100%", label: "Làm bằng tay (Handmade)" },
+  { num: "500+", label: "Học viên Workshop" },
+  { num: "2025+", label: "Hợp tác thương hiệu lớn" },
 ];
 
 export default function AboutPage() {
@@ -57,6 +56,7 @@ export default function AboutPage() {
         <span className="breadcrumb-current">Về chúng tôi</span>
       </div>
 
+      {/* Hero Section */}
       <section className="about-hero">
         <div className="about-hero-header">
           <div className="about-hero-mark">
@@ -69,13 +69,12 @@ export default function AboutPage() {
               priority
             />
           </div>
-
-          <span className="hero-kicker">Câu chuyện của Foxy Handmade</span>
+          <span className="hero-kicker">Câu chuyện của Foxy Handmade & Workshop</span>
         </div>
-        <h1 className="about-hero-title">Những món đồ nhỏ xinh được làm bằng tay và bằng cả sự dịu dàng</h1>
+        <h1 className="about-hero-title">Đồ thủ công làm bằng tay, đong đầy cảm xúc và dấu ấn riêng</h1>
         <p className="about-hero-text">
-          Foxy Handmade bắt đầu từ mong muốn tạo ra những món phụ kiện dễ thương nhưng vẫn đủ tinh
-          tế để bạn dùng mỗi ngày, tặng ai đó, hoặc giữ lại như một niềm vui nho nhỏ cho chính mình.
+          Sản phẩm thủ công của Foxy Handmade được hoàn thiện hoàn toàn bằng tay từ nhiều chất liệu độc đáo:
+          đất sét tự khô, vải, keo epoxy, vỏ sò... Mỗi sản phẩm tạo ra đều là duy nhất và mang một câu chuyện của riêng nó.
         </p>
 
         <div className="hero-stat-grid">
@@ -88,19 +87,20 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Story Section */}
       <section className="section-shell-alt">
         <div className="about-story-grid">
           <div className="section-copy">
-            <span className="section-eyebrow">Bắt đầu từ niềm đam mê thủ công</span>
-            <h2>Foxy tin rằng một món phụ kiện nhỏ cũng có thể kể câu chuyện riêng của người đeo</h2>
+            <span className="section-eyebrow">Sứ mệnh của chúng tôi</span>
+            <h2>Mang nghệ thuật thủ công mỹ nghệ và workshop trải nghiệm đến gần bạn hơn</h2>
             <p>
-              Tụi mình bắt đầu từ tình yêu với những món đồ handmade xinh xắn. Không chỉ là vật trang
-              trí, mỗi chiếc khuyên tai hay chiếc kẹp tóc còn là cách bạn thể hiện tâm trạng, gu thẩm
-              mỹ và sự chăm chút dành cho bản thân.
+              Được sáng lập bởi <strong>chị Ri Mỹ Quyên</strong>, Foxy Handmade & Workshop hoạt động
+              trong lĩnh vực Thủ công Mỹ nghệ với mong muốn mang lại niềm vui, sự thư giãn và cảm xúc trọn vẹn
+              qua từng món quà nhỏ hay các lớp học trải nghiệm.
             </p>
             <p>
-              Vì vậy Foxy chọn đi chậm ở những đoạn quan trọng: lên mẫu kỹ hơn, làm tay cẩn thận hơn,
-              đóng gói chỉn chu hơn và ưu tiên cảm giác “nhận được một món quà nhỏ” khi khách mở hộp.
+              Tụi mình tin rằng việc làm đồ thủ công không chỉ là tạo ra sản phẩm, mà còn là hành trình
+              chữa lành, lưu giữ nét đẹp truyền thống và gắn kết mọi người thông qua các buổi workshop sáng tạo.
             </p>
           </div>
 
@@ -109,21 +109,47 @@ export default function AboutPage() {
               <Image src="/logo.png" alt="Foxy Handmade" width={72} height={72} sizes="72px" />
             </div>
             <p>
-              "Chúng tôi không làm hàng loạt. Chúng tôi làm từng sản phẩm với tất cả tình yêu."
+              "Sản phẩm thủ công của cửa hàng hoàn toàn được làm bằng tay, mỗi tác phẩm là độc nhất và mang một dấu ấn riêng."
             </p>
-            <span>Ri My Quyen — Sáng lập Foxy Handmade</span>
+            <span>Ri Mỹ Quyên — Sáng lập Foxy Handmade & Workshop</span>
           </div>
         </div>
       </section>
 
+      {/* Services Section */}
+      <section className="section-shell-alt" style={{ padding: "60px 0" }}>
+        <div className="section-intro" style={{ textAlign: "center", marginBottom: "40px" }}>
+          <span className="section-eyebrow">Hoạt động tại Foxy</span>
+          <h2>Dịch vụ & Lĩnh vực hoạt động</h2>
+          <p style={{ maxWidth: "600px", margin: "0 auto" }}>
+            Chúng tôi tự hào cung cấp các sản phẩm làm tay tinh xảo và các buổi workshop trải nghiệm bổ ích.
+          </p>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "24px" }}>
+          {[
+            { icon: "🛍️", title: "Bán lẻ Mỹ nghệ", desc: "Trưng bày và bán các mặt hàng phụ kiện, trang trí thủ công làm tay tinh xảo, độc bản." },
+            { icon: "📐", title: "Làm theo yêu cầu", desc: "Nhận đặt làm sản phẩm thủ công được thiết kế và cá nhân hóa theo ý tưởng riêng." },
+            { icon: "🏫", title: "Workshop Cá Nhân", desc: "Tổ chức các buổi dạy làm đồ thủ công cá nhân, nơi bạn tự tay tạo nên tác phẩm của mình." },
+            { icon: "🏢", title: "Workshop Sự Kiện", desc: "Tổ chức workshop thủ công gắn kết tập thể cho các sự kiện, doanh nghiệp và tổ chức." }
+          ].map((s, idx) => (
+            <div key={idx} className="about-value-card" style={{ padding: "30px 24px", background: "white", borderRadius: "var(--radius-md)", border: "1px solid var(--border-light)", textAlign: "center" }}>
+              <div style={{ fontSize: "40px", marginBottom: "16px" }}>{s.icon}</div>
+              <h3 style={{ fontSize: "18px", fontWeight: "700", marginBottom: "10px", color: "var(--text-primary)" }}>{s.title}</h3>
+              <p style={{ fontSize: "14px", color: "var(--text-secondary)", lineHeight: "1.5" }}>{s.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Values Section */}
       <section className="section-shell-alt">
         <div className="section-intro">
           <div className="section-copy">
             <span className="section-eyebrow">Giá trị cốt lõi</span>
-            <h2>Những điều tụi mình giữ lại trong từng thiết kế</h2>
+            <h2>Tại sao nên lựa chọn sản phẩm Handmade?</h2>
             <p>
-              Dù là một món quà nhỏ hay phụ kiện cho ngày thường, Foxy vẫn muốn người nhận cảm thấy có
-              sự chăm chút, dịu dàng và khác biệt vừa đủ.
+              Một món quà làm tay không chỉ là vật chất, mà còn là thông điệp yêu thương, sự trân trọng
+              và thời gian quý báu mà người làm đã gửi gắm.
             </p>
           </div>
         </div>
@@ -139,15 +165,75 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="about-stats-shell">
-        {stats.map((item) => (
-          <div key={item.label} className="about-stat-card">
-            <strong>{item.num}</strong>
-            <span>{item.label}</span>
+      {/* Achievements Section */}
+      <section className="section-shell-alt" style={{ padding: "60px 0" }}>
+        <div className="section-intro" style={{ textAlign: "center", marginBottom: "40px" }}>
+          <span className="section-eyebrow">Hợp tác & Thành tựu</span>
+          <h2>Dấu ấn & Hợp tác 2025 - 2026</h2>
+          <p style={{ maxWidth: "600px", margin: "0 auto" }}>
+            Chúng tôi tự hào khi nhận được sự đồng hành từ các cơ quan truyền thông lớn và các đối tác uy tín.
+          </p>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "24px" }}>
+          {/* Media */}
+          <div style={{ background: "white", padding: "30px", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-light)" }}>
+            <h3 style={{ fontSize: "18px", color: "var(--brand-red-dark)", display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
+              <span>📺</span> Truyền thông Quốc gia
+            </h3>
+            <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "16px" }}>
+              <li style={{ display: "flex", flexDirection: "column" }}>
+                <strong style={{ color: "var(--text-primary)", fontSize: "15px" }}>VTV9</strong>
+                <span style={{ fontSize: "14px", color: "var(--text-secondary)" }}>Đồng hành trong chương trình "Việt Nam ơi! Mình cùng đi"</span>
+              </li>
+              <li style={{ display: "flex", flexDirection: "column" }}>
+                <strong style={{ color: "var(--text-primary)", fontSize: "15px" }}>HTV1</strong>
+                <span style={{ fontSize: "14px", color: "var(--text-secondary)" }}>Xuất hiện giới thiệu trong chương trình "Vươn Khơi"</span>
+              </li>
+            </ul>
           </div>
-        ))}
+
+          {/* Corporate workshops */}
+          <div style={{ background: "white", padding: "30px", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-light)" }}>
+            <h3 style={{ fontSize: "18px", color: "var(--brand-red-dark)", display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
+              <span>🏢</span> Đối Tác Workshop & Sự Kiện
+            </h3>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+              {[
+                "Mercure Vũng Tàu",
+                "Ibis Styles Vũng Tàu",
+                "Trường Nga Vietso",
+                "California Fitness"
+              ].map((partner, idx) => (
+                <div key={idx} style={{ padding: "12px", background: "var(--bg-section)", borderRadius: "var(--radius-sm)", fontSize: "14px", fontWeight: "600", textAlign: "center", color: "var(--text-primary)" }}>
+                  {partner}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Awards */}
+          <div style={{ background: "white", padding: "30px", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-light)" }}>
+            <h3 style={{ fontSize: "18px", color: "var(--brand-red-dark)", display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
+              <span>🏆</span> Giải thưởng nổi bật
+            </h3>
+            <div style={{ marginBottom: "12px" }}>
+              <strong style={{ display: "block", color: "var(--text-primary)", fontSize: "15px" }}>The Grand Ho Tram Strip & Casino</strong>
+            </div>
+            <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "12px" }}>
+              <li style={{ display: "flex", justifyContent: "space-between", fontSize: "14px" }}>
+                <span style={{ color: "var(--text-secondary)" }}>🎈 Lantern making contest</span>
+                <strong style={{ color: "var(--brand-red-dark)" }}>Giải Ba</strong>
+              </li>
+              <li style={{ display: "flex", justifyContent: "space-between", fontSize: "14px" }}>
+                <span style={{ color: "var(--text-secondary)" }}>🎄 Christmas decoration contest</span>
+                <strong style={{ color: "var(--brand-red-dark)" }}>Giải Ba</strong>
+              </li>
+            </ul>
+          </div>
+        </div>
       </section>
 
+      {/* Gallery Section */}
       <section className="section-shell-alt">
         <div className="section-intro">
           <div className="section-copy" style={{ textAlign: "center", margin: "0 auto 24px" }}>
@@ -163,12 +249,13 @@ export default function AboutPage() {
         <AboutGalleryClient />
       </section>
 
+      {/* CTA Section */}
       <section className="listing-hero about-cta">
         <span className="section-eyebrow">Sẵn sàng khám phá?</span>
         <h2 className="listing-hero-title">Những mẫu phụ kiện handmade xinh xắn đang chờ bạn</h2>
         <p className="listing-hero-subtitle">
-          Nếu bạn muốn xem các thiết kế mới nhất hoặc cần chọn quà thật nhanh, tụi mình đã sắp sẵn mọi
-          thứ ở trang chủ và trang khám phá.
+          Nếu bạn muốn xem các thiết kế mới nhất hoặc cần đặt làm mẫu theo yêu cầu riêng, 
+          hãy kết nối ngay với Foxy!
         </p>
         <div className="about-cta-actions">
           <Link href="/" className="btn">
