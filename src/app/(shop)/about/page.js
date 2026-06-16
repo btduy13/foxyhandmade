@@ -127,17 +127,17 @@ export default function AboutPage() {
             </p>
           </div>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "24px" }}>
+        <div className="about-values-grid">
           {[
             { icon: "🛍️", title: "Bán lẻ Mỹ nghệ", desc: "Trưng bày và bán các mặt hàng phụ kiện, trang trí thủ công làm tay tinh xảo, độc bản." },
             { icon: "📐", title: "Làm theo yêu cầu", desc: "Nhận đặt làm sản phẩm thủ công được thiết kế và cá nhân hóa theo ý tưởng riêng." },
             { icon: "🏫", title: "Workshop Cá Nhân", desc: "Tổ chức các buổi dạy làm đồ thủ công cá nhân, nơi bạn tự tay tạo nên tác phẩm của mình." },
             { icon: "🏢", title: "Workshop Sự Kiện", desc: "Tổ chức workshop thủ công gắn kết tập thể cho các sự kiện, doanh nghiệp và tổ chức." }
           ].map((s, idx) => (
-            <div key={idx} className="about-value-card" style={{ padding: "30px 24px", background: "white", borderRadius: "var(--radius-md)", border: "1px solid var(--border-light)", textAlign: "center" }}>
-              <div style={{ fontSize: "40px", marginBottom: "16px" }}>{s.icon}</div>
-              <h3 style={{ fontSize: "18px", fontWeight: "700", marginBottom: "10px", color: "var(--text-primary)" }}>{s.title}</h3>
-              <p style={{ fontSize: "14px", color: "var(--text-secondary)", lineHeight: "1.5" }}>{s.desc}</p>
+            <div key={idx} className="about-value-card">
+              <div className="about-value-icon">{s.icon}</div>
+              <h3>{s.title}</h3>
+              <p>{s.desc}</p>
             </div>
           ))}
         </div>
@@ -178,9 +178,9 @@ export default function AboutPage() {
             </p>
           </div>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "24px" }}>
+        <div className="about-values-grid">
           {/* Media */}
-          <div style={{ background: "white", padding: "30px", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-light)" }}>
+          <div className="about-value-card">
             <h3 style={{ fontSize: "18px", color: "var(--brand-red-dark)", display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
               <span>📺</span> Truyền thông Quốc gia
             </h3>
@@ -197,7 +197,7 @@ export default function AboutPage() {
           </div>
 
           {/* Corporate workshops */}
-          <div style={{ background: "white", padding: "30px", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-light)" }}>
+          <div className="about-value-card">
             <h3 style={{ fontSize: "18px", color: "var(--brand-red-dark)", display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
               <span>🏢</span> Đối Tác Workshop & Sự Kiện
             </h3>
@@ -216,7 +216,7 @@ export default function AboutPage() {
           </div>
 
           {/* Awards */}
-          <div style={{ background: "white", padding: "30px", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-light)" }}>
+          <div className="about-value-card">
             <h3 style={{ fontSize: "18px", color: "var(--brand-red-dark)", display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
               <span>🏆</span> Giải thưởng nổi bật
             </h3>
