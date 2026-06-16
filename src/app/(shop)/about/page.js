@@ -118,10 +118,12 @@ export default function AboutPage() {
 
       {/* Services Section */}
       <section className="section-shell-alt" style={{ padding: "60px 0" }}>
-        <div className="section-intro" style={{ textAlign: "center", marginBottom: "40px" }}>
-          <span className="section-eyebrow">Hoạt động tại Foxy</span>
-          <h2>Dịch vụ & Lĩnh vực hoạt động</h2>
-          <p style={{ maxWidth: "600px", margin: "0 auto" }}>
+        <div className="section-intro" style={{ marginBottom: "40px" }}>
+          <div className="section-copy">
+            <span className="section-eyebrow">Hoạt động tại Foxy</span>
+            <h2>Dịch vụ & Lĩnh vực hoạt động</h2>
+          </div>
+          <p style={{ maxWidth: "480px", color: "var(--text-secondary)", margin: 0 }}>
             Chúng tôi tự hào cung cấp các sản phẩm làm tay tinh xảo và các buổi workshop trải nghiệm bổ ích.
           </p>
         </div>
@@ -167,10 +169,12 @@ export default function AboutPage() {
 
       {/* Achievements Section */}
       <section className="section-shell-alt" style={{ padding: "60px 0" }}>
-        <div className="section-intro" style={{ textAlign: "center", marginBottom: "40px" }}>
-          <span className="section-eyebrow">Hợp tác & Thành tựu</span>
-          <h2>Dấu ấn & Hợp tác 2025 - 2026</h2>
-          <p style={{ maxWidth: "600px", margin: "0 auto" }}>
+        <div className="section-intro" style={{ marginBottom: "40px" }}>
+          <div className="section-copy">
+            <span className="section-eyebrow">Hợp tác & Thành tựu</span>
+            <h2>Dấu ấn & Hợp tác 2025 - 2026</h2>
+          </div>
+          <p style={{ maxWidth: "480px", color: "var(--text-secondary)", margin: 0 }}>
             Chúng tôi tự hào khi nhận được sự đồng hành từ các cơ quan truyền thông lớn và các đối tác uy tín.
           </p>
         </div>
