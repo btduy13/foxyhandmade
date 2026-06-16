@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import AboutGalleryClient from "@/components/AboutGalleryClient";
+
 
 export const metadata = {
   title: "Về Chúng Tôi — Foxy Handmade",
@@ -144,6 +146,21 @@ export default function AboutPage() {
             <span>{item.label}</span>
           </div>
         ))}
+      </section>
+
+      <section className="section-shell-alt">
+        <div className="section-intro">
+          <div className="section-copy" style={{ textAlign: "center", margin: "0 auto 24px" }}>
+            <span className="section-eyebrow">Thư viện ảnh</span>
+            <h2>Góc nhỏ Foxy Handmade</h2>
+            <p style={{ maxWidth: "600px", margin: "0 auto" }}>
+              Những hình ảnh chân thực về các dòng sản phẩm phụ kiện làm tay xinh xắn, 
+              không gian trưng bày và tình yêu được gửi gắm trọn vẹn trong từng chi tiết.
+            </p>
+          </div>
+        </div>
+
+        <AboutGalleryClient />
       </section>
 
       <section className="listing-hero about-cta">
