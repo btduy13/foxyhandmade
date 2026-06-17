@@ -716,8 +716,9 @@ export default function AdminDashboard() {
                     <label style={S.label}>Phụ đề</label>
                     <input style={S.input} value={hp.heroSubtitle} onChange={e => setHp({ ...hp, heroSubtitle: e.target.value })} placeholder="Khám phá những thiết kế mới nhất..." />
                   </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", alignItems: "end" }}>
                     <div>
+                      <ImageUpload label="Ảnh Hero" currentUrl={hp.heroBannerImage} onUpload={url => setHp({ ...hp, heroBannerImage: url })} />
                       <label style={S.label}>URL Ảnh Hero</label>
                       <input style={S.input} value={hp.heroBannerImage} onChange={e => setHp({ ...hp, heroBannerImage: e.target.value })} placeholder="/images/hero_banner.png" />
                     </div>
