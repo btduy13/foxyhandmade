@@ -150,6 +150,8 @@ export default function AdminDashboard() {
   const [newCategoryName, setNewCategoryName] = useState("");
   const [formProduct, setFormProduct] = useState(EMPTY_PRODUCT);
   const [editingId, setEditingId] = useState(null);
+  const [editingCategoryId, setEditingCategoryId] = useState(null);
+  const [editingCategoryName, setEditingCategoryName] = useState("");
 
   const [activeTab, setActiveTab] = useState("products");
   const [searchQuery, setSearchQuery] = useState("");
@@ -592,21 +594,75 @@ export default function AdminDashboard() {
               </form>
               <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                 {categories.length === 0 && <div style={{ textAlign: "center", color: "rgba(255,255,255,0.4)", padding: "32px" }}>Chưa có danh mục nào.</div>}
-                {categories.map(c => (
-                  <div key={c.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 18px", background: "rgba(255,255,255,0.05)", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.08)" }}>
-                    <div style={{ flex: 1, marginRight: "12px" }}>
-                      <input 
-                        style={{ ...S.input, background: "transparent", border: "none", padding: "0", fontSize: "15px", fontWeight: "700" }} 
-                        value={c.name} 
-                        onChange={e => handleRenameCategory(c.id, e.target.value)} 
-                        onBlur={fetchData}
-                        title="Nhấn để đổi tên"
-                      />
-                      <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)", marginTop: "2px" }}>{products.filter(p => p.categoryId === c.id).length} sản phẩm</div>
+                {categories.map(c => {
+                  const isEditing = editingCategoryId === c.id;
+                  return (
+                    <div key={c.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 18px", background: "rgba(255,255,255,0.05)", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.08)" }}>
+                      <div style={{ flex: 1, marginRight: "12px" }}>
+                        {isEditing ? (
+                          <input 
+                            style={{ ...S.input, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(232,93,116,0.6)", padding: "6px 12px", fontSize: "15px", fontWeight: "700" }} 
+                            value={editingCategoryName} 
+                            onChange={e => setEditingCategoryName(e.target.value)}
+                            onKeyDown={e => {
+                              if (e.key === "Enter") {
+                                handleRenameCategory(c.id, editingCategoryName);
+                                setEditingCategoryId(null);
+                              } else if (e.key === "Escape") {
+                                setEditingCategoryId(null);
+                              }
+                            }}
+                            autoFocus
+                          />
+                        ) : (
+                          <>
+                            <div style={{ fontSize: "15px", fontWeight: "700", color: "#fff" }}>{c.name}</div>
+                            <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)", marginTop: "2px" }}>{products.filter(p => p.categoryId === c.id).length} sản phẩm</div>
+                          </>
+                        )}
+                      </div>
+                      <div style={{ display: "flex", gap: "8px" }}>
+                        {isEditing ? (
+                          <>
+                            <button 
+                              style={{ ...S.btnEdit, background: "rgba(34,197,94,0.15)", color: "#4ade80", border: "1px solid rgba(34,197,94,0.3)" }} 
+                              onClick={async () => {
+                                await handleRenameCategory(c.id, editingCategoryName);
+                                setEditingCategoryId(null);
+                              }}
+                            >
+                              💾 Lưu
+                            </button>
+                            <button 
+                              style={S.btnOutline} 
+                              onClick={() => setEditingCategoryId(null)}
+                            >
+                              ✕ Hủy
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button 
+                              style={S.btnEdit} 
+                              onClick={() => {
+                                setEditingCategoryId(c.id);
+                                setEditingCategoryName(c.name);
+                              }}
+                            >
+                              ✏️ Sửa
+                            </button>
+                            <button 
+                              style={S.btnDanger} 
+                              onClick={() => handleDeleteCategory(c.id)}
+                            >
+                              🗑 Xóa
+                            </button>
+                          </>
+                        )}
+                      </div>
                     </div>
-                    <button style={S.btnDanger} onClick={() => handleDeleteCategory(c.id)}>🗑 Xóa</button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
